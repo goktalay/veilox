@@ -83,9 +83,16 @@ def _docker(*args, timeout=120):
     return subprocess.run(['docker', *args], capture_output=True, text=True, timeout=timeout)
 
 
+RELOAD = os.environ.get('VEILOX_CF_RELOAD', 'docker')       # 'docker' (fabrika) | 'systemd' (sunucu native cloudflared)
+CF_SERVICE = os.environ.get('VEILOX_CF_SERVICE', 'cloudflared')
+
+
 def reload_tunnel():
-    """Tünel konteynerini yeniden başlatır (yeni ingress devreye girer; birkaç saniye tüm tüneller kısa kesilir)."""
-    r = _docker('restart', CONTAINER)
+    """Yeni ingress'i devreye alır. Fabrikada Docker konteyneri restart; sunucuda native cloudflared servisi restart."""
+    if RELOAD == 'systemd':
+        r = subprocess.run(['systemctl', 'restart', CF_SERVICE], capture_output=True, text=True, timeout=60)
+    else:
+        r = _docker('restart', CONTAINER)
     if r.returncode != 0:
         raise RuntimeError(f'tünel yeniden başlatılamadı: {r.stderr.strip() or r.stdout.strip()}')
     return True

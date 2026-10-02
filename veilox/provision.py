@@ -80,10 +80,10 @@ def free_port(conn):
     raise RuntimeError('Boş port bulunamadı')
 
 
-def _env_text(admin_user, admin_pass, full_name, company_name, master_user, modules):
+def _env_text(admin_user, admin_pass, full_name, company_name, master_user, modules, white_label=False):
     mods = ','.join(modules)
     return (
-        f'# {company_name} — Fabrika Yönetim Sistemi (Veilox merkez tarafından oluşturuldu)\n'
+        f'# {company_name} — HEPGO ERP (merkez tarafından oluşturuldu)\n'
         '# Yönetici bilgileri yalnızca ilk kurulumda okunur; sonra şifre uygulamadan değiştirilir.\n'
         f'CAYMAZ_ADMIN_USERNAME={admin_user}\n'
         f'CAYMAZ_ADMIN_PASSWORD={admin_pass}\n'
@@ -91,6 +91,7 @@ def _env_text(admin_user, admin_pass, full_name, company_name, master_user, modu
         f'CAYMAZ_COMPANY_NAME={company_name}\n'
         f'CAYMAZ_MASTER_USERNAME={master_user}\n'
         f'CAYMAZ_MODULES={mods}\n'
+        f'CAYMAZ_WHITE_LABEL={"1" if white_label else "0"}\n'
         'CAYMAZ_SEED_SPARE_STOCK=0\n'
     )
 
@@ -114,8 +115,13 @@ def _unit_text(name, url, bind_env, env_file, data_dir, brand_dir):
     )
 
 
+# systemd kapsamı: fabrikada kullanıcı servisi ('--user'), sunucuda sistem servisi ('' = sistem).
+SYSTEMCTL_SCOPE = os.environ.get('VEILOX_SYSTEMCTL_SCOPE', '--user')
+
+
 def _systemctl(*args):
-    return subprocess.run(['systemctl', '--user', *args], capture_output=True, text=True, timeout=120)
+    cmd = ['systemctl'] + ([SYSTEMCTL_SCOPE] if SYSTEMCTL_SCOPE else []) + list(args)
+    return subprocess.run(cmd, capture_output=True, text=True, timeout=120)
 
 
 def provision_online(conn, company):
@@ -159,7 +165,8 @@ def provision_online(conn, company):
             dirs.append(SOCK_DIR)
         for d in dirs:
             d.mkdir(parents=True, exist_ok=True)
-        env_file.write_text(_env_text(master_user, admin_pass, full_name, name, master_user, modules), encoding='utf-8')
+        env_file.write_text(_env_text(master_user, admin_pass, full_name, name, master_user, modules,
+                                      white_label=bool(company.get('white_label'))), encoding='utf-8')
         os.chmod(env_file, 0o600)
 
         if EXEC:

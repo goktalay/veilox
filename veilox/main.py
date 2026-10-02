@@ -182,13 +182,14 @@ def register(body: RegisterIn, request: Request):
         if mode == 'both':
             mode = 'online'
         fee = pkg_row['monthly_fee'] if pkg_row else 0
+        wl = int(pkg_row['white_label']) if pkg_row else 0
         slug = _unique_slug(conn, provision.slugify(name))
         _reg[ip].append(now)
         conn.execute(
-            'INSERT INTO companies(slug,name,package_id,mode,modules,master_username,master_name,'
+            'INSERT INTO companies(slug,name,package_id,mode,modules,white_label,master_username,master_name,'
             'master_password_hash,master_secret,monthly_fee,status,self_registered,created_at) '
-            'VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)',
-            (slug, name, (pkg_row['id'] if pkg_row else None), mode, _j(mods),
+            'VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            (slug, name, (pkg_row['id'] if pkg_row else None), mode, _j(mods), wl,
              user, body.master_name.strip(), make_hash(body.password), body.password, fee,
              'pending', 1, db.now()))
         conn.commit()
@@ -203,6 +204,7 @@ class PackageIn(BaseModel):
     monthly_fee: float = 0
     mode: str = 'online'
     visible: bool = True
+    white_label: bool = False
     sort: int = 0
 
 
@@ -218,10 +220,10 @@ def package_create(body: PackageIn, request: Request):
     current(request)
     with db.connect() as conn:
         slug = _unique_slug(conn, provision.slugify(body.name), table='packages')
-        cur = conn.execute('INSERT INTO packages(slug,name,description,modules,monthly_fee,mode,visible,sort,created_at) '
-                           'VALUES(?,?,?,?,?,?,?,?,?)',
+        cur = conn.execute('INSERT INTO packages(slug,name,description,modules,monthly_fee,mode,visible,white_label,sort,created_at) '
+                           'VALUES(?,?,?,?,?,?,?,?,?,?)',
                            (slug, body.name.strip(), body.description, _j(valid_modules(body.modules)),
-                            body.monthly_fee, _mode(body.mode), int(body.visible), body.sort, db.now()))
+                            body.monthly_fee, _mode(body.mode), int(body.visible), int(body.white_label), body.sort, db.now()))
         conn.commit()
         return db.package_public(db.row(conn, 'SELECT * FROM packages WHERE id=?', (cur.lastrowid,)))
 
@@ -232,9 +234,9 @@ def package_update(pid: int, body: PackageIn, request: Request):
     with db.connect() as conn:
         if not db.row(conn, 'SELECT 1 FROM packages WHERE id=?', (pid,)):
             raise HTTPException(404, 'Paket bulunamadı')
-        conn.execute('UPDATE packages SET name=?,description=?,modules=?,monthly_fee=?,mode=?,visible=?,sort=? WHERE id=?',
+        conn.execute('UPDATE packages SET name=?,description=?,modules=?,monthly_fee=?,mode=?,visible=?,white_label=?,sort=? WHERE id=?',
                      (body.name.strip(), body.description, _j(valid_modules(body.modules)), body.monthly_fee,
-                      _mode(body.mode), int(body.visible), body.sort, pid))
+                      _mode(body.mode), int(body.visible), int(body.white_label), body.sort, pid))
         conn.commit()
         return db.package_public(db.row(conn, 'SELECT * FROM packages WHERE id=?', (pid,)))
 
@@ -258,6 +260,7 @@ class CompanyIn(BaseModel):
     modules: list[str] = []
     url: str = ''
     password: str = ''   # boşsa provisioning/offline anında üretilir
+    white_label: bool = False   # boş bırakılırsa paketten miras alınır
     note: str = ''
 
 
@@ -288,14 +291,15 @@ def company_create(body: CompanyIn, request: Request):
         pkg_row = db.row(conn, 'SELECT * FROM packages WHERE slug=?', (body.package_slug,)) if body.package_slug else None
         mods = valid_modules(body.modules) or (db.package_public(pkg_row)['modules'] if pkg_row else [])
         fee = pkg_row['monthly_fee'] if pkg_row else 0
+        wl = int(body.white_label or (pkg_row['white_label'] if pkg_row else 0))   # firma ayarı yoksa paketten
         pwd = body.password.strip() or provision.gen_password()
         slug = _unique_slug(conn, provision.slugify(body.name))
         cur = conn.execute(
-            'INSERT INTO companies(slug,name,url,package_id,mode,modules,master_username,master_name,'
+            'INSERT INTO companies(slug,name,url,package_id,mode,modules,white_label,master_username,master_name,'
             'master_password_hash,master_secret,monthly_fee,status,self_registered,note,created_at) '
-            'VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+            'VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
             (slug, body.name.strip(), body.url.strip(), (pkg_row['id'] if pkg_row else None), _mode(body.mode, allow_offline=True),
-             _j(mods), user, body.master_name.strip(), make_hash(pwd), pwd, fee, 'approved', 0, body.note, db.now()))
+             _j(mods), wl, user, body.master_name.strip(), make_hash(pwd), pwd, fee, 'approved', 0, body.note, db.now()))
         conn.commit()
         return db.company_public(db.row(conn, 'SELECT * FROM companies WHERE id=?', (cur.lastrowid,)))
 

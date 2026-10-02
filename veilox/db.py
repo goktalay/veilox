@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS packages (
     monthly_fee REAL NOT NULL DEFAULT 0,
     mode TEXT NOT NULL DEFAULT 'online',  -- online | offline | both
     visible INTEGER NOT NULL DEFAULT 1,   -- tanıtım sayfasında görünür
+    white_label INTEGER NOT NULL DEFAULT 0,  -- firma kendi markası/domaini (HEPGO görünmez)
     sort INTEGER NOT NULL DEFAULT 0,
     created_at TEXT NOT NULL
 );
@@ -59,6 +60,7 @@ CREATE TABLE IF NOT EXISTS companies (
     package_id INTEGER REFERENCES packages(id) ON DELETE SET NULL,
     mode TEXT NOT NULL DEFAULT 'online',  -- online | offline
     modules TEXT NOT NULL DEFAULT '[]',
+    white_label INTEGER NOT NULL DEFAULT 0,
     master_username TEXT NOT NULL,
     master_name TEXT DEFAULT '',
     master_password_hash TEXT DEFAULT '',  -- merkez kaydı (PBKDF2); doğrulama için
@@ -92,6 +94,11 @@ def init():
         cols = [r[1] for r in conn.execute('PRAGMA table_info(companies)')]
         if 'socket' not in cols:
             conn.execute('ALTER TABLE companies ADD COLUMN socket TEXT')
+        if 'white_label' not in cols:
+            conn.execute('ALTER TABLE companies ADD COLUMN white_label INTEGER NOT NULL DEFAULT 0')
+        pcols = [r[1] for r in conn.execute('PRAGMA table_info(packages)')]
+        if 'white_label' not in pcols:
+            conn.execute('ALTER TABLE packages ADD COLUMN white_label INTEGER NOT NULL DEFAULT 0')
         conn.commit()
         _seed_packages(conn)
         _migrate_tenants(conn)

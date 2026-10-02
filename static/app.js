@@ -269,6 +269,7 @@ function packageForm(p) {
   const fee = h('input', { class: 'input', type: 'number', min: '0', step: '50', value: p?.monthly_fee ?? 0 });
   const mode = h('select', { class: 'input' }, ['online', 'offline', 'both'].map(m => h('option', { value: m, selected: p?.mode === m }, MODE[m])));
   const visible = h('input', { type: 'checkbox', checked: p ? !!p.visible : true });
+  const whiteLabel = h('input', { type: 'checkbox', checked: p ? !!p.white_label : false });
   const sort = h('input', { class: 'input', type: 'number', value: p?.sort ?? 0 });
   const picker = modulesPicker(p?.modules || []);
   const err = h('div', { class: 'error' });
@@ -277,12 +278,13 @@ function packageForm(p) {
     field('Paket adı', name), field('Açıklama', desc),
     h('div', { class: 'two' }, field('Aylık ücret (₺)', fee), field('Mod', mode)),
     h('div', { class: 'two' }, h('label', { class: 'field inline' }, visible, h('span', null, 'Tanıtımda görünür')), field('Sıra', sort)),
+    h('label', { class: 'field inline' }, whiteLabel, h('span', null, 'Beyaz etiket (firma kendi markası/domaini — HEPGO görünmez)')),
     h('div', { class: 'field' }, h('span', null, 'Modüller'), picker), err, h('div', { class: 'form-foot' }, save));
   const m = modal({ title: edit ? 'Paketi düzenle' : 'Yeni paket', body: form });
   form.addEventListener('submit', async e => {
     e.preventDefault(); save.disabled = true; err.textContent = '';
     const payload = { name: name.value, description: desc.value, monthly_fee: Number(fee.value) || 0,
-      mode: mode.value, visible: visible.checked, sort: Number(sort.value) || 0, modules: picker.getValue() };
+      mode: mode.value, visible: visible.checked, white_label: whiteLabel.checked, sort: Number(sort.value) || 0, modules: picker.getValue() };
     try {
       if (edit) await api('PUT', `/api/packages/${p.id}`, payload);
       else await api('POST', '/api/packages', payload);
