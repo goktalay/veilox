@@ -1,0 +1,18 @@
+[
+  {
+    "id": "gokkubbe",
+    "name": "GÖKKUBBE Teknoloji",
+    "url": "https://caymaz.app",
+    "app_dir": "/home/mkaderoglu/caymazbuild",
+    "data_dir": "/home/mkaderoglu/caymazbuild/data",
+    "brand_dir": null
+  },
+  {
+    "id": "turkbey",
+    "name": "Türkbey Teknoloji A.Ş.",
+    "url": "https://turkbey.app",
+    "app_dir": "/home/mkaderoglu/caymazbuild",
+    "data_dir": "/home/mkaderoglu/caymazbuild/tenants/turkbey/data",
+    "brand_dir": "/home/mkaderoglu/caymazbuild/tenants/turkbey/brand"
+  }
+]

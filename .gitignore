@@ -1,0 +1,17 @@
+# Sanal ortam / önbellek
+.venv/
+__pycache__/
+*.pyc
+
+# Canlı veriler (merkez kayıt defteri) ve yedekleri
+/data/
+*.db
+*.db-wal
+*.db-shm
+
+# Gizli ayarlar (merkez kullanıcı PBKDF2 özeti, Cloudflare bayrakları)
+.env
+.env.*
+
+# Üretilen ekran görüntüsü soketleri vb. (geçici)
+*.sock
