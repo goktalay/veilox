@@ -31,7 +31,7 @@ const T = {
     regName: 'Firma adı', regMail: 'Master e-posta', regMailHint: 'Bu hesap firmanızın sahibi (master) olur.',
     regFull: 'Ad soyad', regPass: 'Şifre (en az 10 karakter)', regBtn: 'Kaydı tamamla',
     regOk: 'Kaydınız alındı ✓', regOkP: 'Onaylandığında firmanız kurulacak ve giriş bilgileriniz iletilecektir.', close: 'Kapat',
-    foot: 'Fabrika Yönetim Sistemi',
+    foot: 'HEPGO ERP',
   },
   en: {
     nav: ['Features', 'Meetings', 'Pricing', 'Security'], login: 'Console sign-in', create: 'Create your company',
@@ -54,7 +54,7 @@ const T = {
     regName: 'Company name', regMail: 'Master email', regMailHint: 'This account becomes your company owner (master).',
     regFull: 'Full name', regPass: 'Password (min 10 characters)', regBtn: 'Complete registration',
     regOk: 'Registration received ✓', regOkP: 'Once approved, your company will be set up and your credentials shared.', close: 'Close',
-    foot: 'Factory Management System',
+    foot: 'ERP',
   },
 };
 
@@ -131,7 +131,7 @@ function page() {
   }).join('');
   return `
   <header class="nav" id="nav"><div class="wrap nav-in">
-    <a class="brand" href="/"><img src="/static/favicon.svg" alt="" class="brand-logo"><span class="brand-txt"><b>VEILOX</b><span>${esc(t.foot)}</span></span></a>
+    <a class="brand" href="/"><img src="/static/img/hepgo-mark.png" alt="" class="brand-logo"><span class="brand-txt"><b>HEPGO</b><span>${esc(t.foot)}</span></span></a>
     <nav class="nav-links"><a href="#ozellikler">${t.nav[0]}</a><a href="#meet">${t.nav[1]}</a><a href="#ekran">${lang === 'tr' ? 'Ekranlar' : 'Screens'}</a><a href="#fiyatlar">${t.nav[2]}</a><a href="#guvenlik">${t.nav[3]}</a></nav>
     <div class="nav-ctl">
       <button class="icon-btn" id="langBtn" title="Dil / Language">${lang === 'tr' ? 'EN' : 'TR'}</button>
@@ -186,7 +186,7 @@ function page() {
       <button class="btn btn-white btn-lg" id="createBtn3">${esc(t.create)}</button></div></section>
   </main>
   <footer class="foot"><div class="wrap foot-in">
-    <div class="foot-brand"><img src="/static/favicon.svg" alt=""><span>VEILOX</span></div>
+    <div class="foot-brand"><img src="/static/img/hepgo-mark.png" alt=""><span>HEPGO</span></div>
     <div class="foot-meta">© <span>${new Date().getFullYear()}</span> · ${esc(t.foot)}</div>
   </div></footer>`;
 }

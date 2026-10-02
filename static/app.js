@@ -89,7 +89,7 @@ function renderLogin(message) {
   const err = h('div', { class: 'error', role: 'alert' }, message || '');
   const btn = h('button', { class: 'btn primary', type: 'submit' }, 'Giriş');
   const form = h('form', { class: 'login glass' },
-    h('div', { class: 'brand' }, h('span', { class: 'mark' }), h('b', null, 'VEILOX')),
+    h('div', { class: 'brand' }, h('span', { class: 'mark' }), h('b', null, 'HEPGO')),
     h('p', { class: 'muted center' }, 'Merkez paneli'),
     user, pass, err, btn);
   form.addEventListener('submit', async e => {
@@ -107,7 +107,7 @@ function renderLogin(message) {
 function topbar(active) {
   const tab = (key, label) => h('a', { class: `tab ${active === key ? 'on' : ''}`, href: `#/${key}` }, label);
   return h('header', { class: 'topbar' },
-    h('a', { class: 'brand small', href: '#/firmalar' }, h('span', { class: 'mark' }), h('b', null, 'VEILOX')),
+    h('a', { class: 'brand small', href: '#/firmalar' }, h('span', { class: 'mark' }), h('b', null, 'HEPGO')),
     h('nav', { class: 'tabs' }, tab('firmalar', 'Firmalar'), tab('paketler', 'Paketler')),
     h('span', { class: 'grow' }),
     h('a', { class: 'btn ghost', href: '/', target: '_blank', rel: 'noopener' }, 'Tanıtım ↗'),
