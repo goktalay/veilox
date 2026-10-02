@@ -136,6 +136,48 @@ def me(request: Request):
     return {'username': USERNAME}
 
 
+def _server_stats():
+    """Merkez (bu) sunucunun kaynak durumu — yalnızca merkez kullanıcısına. stdlib (/proc + shutil)."""
+    import os
+    import shutil
+    out = {}
+    try:
+        la = os.getloadavg()
+        cores = os.cpu_count() or 1
+        out['cores'] = cores
+        out['load'] = [round(x, 2) for x in la]
+        out['cpu_pct'] = round(min(100.0, la[0] / cores * 100))
+    except Exception:   # noqa: BLE001
+        pass
+    try:
+        m = {}
+        with open('/proc/meminfo', encoding='utf-8') as f:
+            for line in f:
+                k, _, v = line.partition(':')
+                m[k.strip()] = int(v.split()[0]) * 1024
+        total, avail = m.get('MemTotal', 0), m.get('MemAvailable', 0)
+        out['mem_total'], out['mem_used'] = total, total - avail
+    except Exception:   # noqa: BLE001
+        pass
+    try:
+        du = shutil.disk_usage('/')
+        out['disk_total'], out['disk_used'], out['disk_free'] = du.total, du.used, du.free
+    except Exception:   # noqa: BLE001
+        pass
+    try:
+        with open('/proc/uptime', encoding='utf-8') as f:
+            out['uptime_s'] = int(float(f.read().split()[0]))
+    except Exception:   # noqa: BLE001
+        pass
+    return out
+
+
+@app.get('/api/server-stats')
+def server_stats(request: Request):
+    current(request)
+    return _server_stats()
+
+
 # ---------- Herkese açık: paket vitrini + self-servis kayıt
 @app.get('/api/public/packages')
 def public_packages():

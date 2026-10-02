@@ -106,10 +106,20 @@ function renderLogin(message) {
 // ---------- Üst çubuk + sekmeler
 function topbar(active) {
   const tab = (key, label) => h('a', { class: `tab ${active === key ? 'on' : ''}`, href: `#/${key}` }, label);
+  const srv = h('span', { class: 'srv-stat small muted', title: 'Merkez sunucu durumu' }, '');
+  const pct = (u, t) => (t ? Math.round(u / t * 100) : 0);
+  const loadSrv = async () => {
+    try {
+      const s = await api('GET', '/api/server-stats');
+      srv.textContent = `Sunucu · CPU %${s.cpu_pct ?? '—'} · RAM %${pct(s.mem_used, s.mem_total)} · Disk %${pct(s.disk_used, s.disk_total)}`;
+    } catch { /* */ }
+  };
+  loadSrv(); clearInterval(topbar._t); topbar._t = setInterval(loadSrv, 5000);
   return h('header', { class: 'topbar' },
     h('a', { class: 'brand small', href: '#/firmalar' }, h('span', { class: 'mark' }), h('b', null, 'HEPGO')),
     h('nav', { class: 'tabs' }, tab('firmalar', 'Firmalar'), tab('paketler', 'Paketler')),
     h('span', { class: 'grow' }),
+    srv,
     h('a', { class: 'btn ghost', href: '/', target: '_blank', rel: 'noopener' }, 'Tanıtım ↗'),
     h('button', { class: 'btn ghost', type: 'button', onclick: async () => { await api('POST', '/api/logout').catch(() => {}); renderLogin(); } }, 'Çıkış'));
 }
