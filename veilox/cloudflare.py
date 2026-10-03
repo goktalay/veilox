@@ -8,9 +8,12 @@ Hepsi VEILOX_CF_ENABLE=1 ile açılır (varsayılan kapalı → firma yalnız ye
 VEILOX_CF_BASE (veilox.app), VEILOX_CF_CONTAINER (caymaz-tunnel-app), VEILOX_CF_TUNNEL (caymaz),
 VEILOX_CF_CONFIG (~/.cloudflared/config.yml).
 """
+import json
 import os
 import subprocess
 import time
+import urllib.error
+import urllib.request
 from pathlib import Path
 
 ENABLED = os.environ.get('VEILOX_CF_ENABLE', '0') == '1'
@@ -88,9 +91,10 @@ CF_SERVICE = os.environ.get('VEILOX_CF_SERVICE', 'cloudflared')
 
 
 def reload_tunnel():
-    """Yeni ingress'i devreye alır. Fabrikada Docker konteyneri restart; sunucuda native cloudflared servisi restart."""
+    """Yeni ingress'i devreye alır. Fabrikada Docker konteyneri restart; sunucuda native cloudflared servisi restart.
+    Sunucuda veilox hepgo kullanıcısıyla çalıştığından systemctl için parolasız sudo gerekir (sudoers drop-in)."""
     if RELOAD == 'systemd':
-        r = subprocess.run(['systemctl', 'restart', CF_SERVICE], capture_output=True, text=True, timeout=60)
+        r = subprocess.run(['sudo', '-n', 'systemctl', 'restart', CF_SERVICE], capture_output=True, text=True, timeout=60)
     else:
         r = _docker('restart', CONTAINER)
     if r.returncode != 0:
@@ -100,9 +104,66 @@ def reload_tunnel():
 
 ROUTE_DNS = os.environ.get('VEILOX_CF_ROUTE_DNS', '1') != '0'   # 0 = per-firma DNS komutu çalıştırma (wildcard yeterli)
 
+# Cloudflare API token ile DNS otomasyonu (HER bölge — özel domainler dahil). cloudflared route dns yalnız cert'in
+# bölgesinde çalıştığından, token verildiğinde önce API yolu kullanılır. (Env TEMBEL okunur — .env sonradan yüklenebilir.)
+def _cf_token():
+    return os.environ.get('VEILOX_CF_API_TOKEN', '').strip()
+
+
+def _cf_tunnel_id():
+    return os.environ.get('VEILOX_CF_TUNNEL_ID', '').strip()
+
+
+def _cf_api(method, path, data=None):
+    body = json.dumps(data).encode() if data is not None else None
+    req = urllib.request.Request('https://api.cloudflare.com/client/v4' + path, data=body, method=method,
+        headers={'Authorization': 'Bearer ' + _cf_token(), 'Content-Type': 'application/json'})
+    try:
+        with urllib.request.urlopen(req, timeout=30) as f:
+            return json.load(f)
+    except urllib.error.HTTPError as e:
+        try:
+            return json.load(e)
+        except Exception:   # noqa: BLE001
+            return {'success': False, 'errors': [{'message': str(e)}]}
+
+
+def _zone_for(host):
+    """host'u kapsayan bölgeyi (en uzun eşleşen) bulur → (zone_id, zone_name) ya da (None, None)."""
+    d = _cf_api('GET', '/zones?per_page=50')
+    res = d.get('result') or []
+    cands = [z for z in res if host == z['name'] or host.endswith('.' + z['name'])]
+    if not cands:
+        return None, None
+    z = max(cands, key=lambda z: len(z['name']))
+    return z['id'], z['name']
+
+
+def route_dns_api(host):
+    """CF API ile host → tünel CNAME (proxied). Mevcut A/AAAA/CNAME değiştirilir. Idempotent."""
+    tid = _cf_tunnel_id()
+    if not (_cf_token() and tid):
+        return False, 'API token/tunnel id yok'
+    target = f'{tid}.cfargotunnel.com'
+    zid, zname = _zone_for(host)
+    if not zid:
+        return False, f'bölge bulunamadı: {host}'
+    d = _cf_api('GET', f'/zones/{zid}/dns_records?name={host}&per_page=100')
+    recs = d.get('result') or []
+    if any(r['type'] == 'CNAME' and r['content'] == target for r in recs):
+        return True, f'zaten var ({zname})'
+    for r in recs:
+        if r['type'] in ('A', 'AAAA', 'CNAME'):
+            _cf_api('DELETE', f"/zones/{zid}/dns_records/{r['id']}")
+    o = _cf_api('POST', f'/zones/{zid}/dns_records',
+                {'type': 'CNAME', 'name': host, 'content': target, 'proxied': True, 'ttl': 1})
+    return bool(o.get('success')), (f'eklendi ({zname})' if o.get('success') else str(o.get('errors')))
+
 
 def route_dns(host):
-    """Belirli bir ana makine adı için tünele CNAME kaydı oluşturur (cloudflared; wildcard DEĞİL). Idempotent."""
+    """host için tünele CNAME kaydı. Token varsa CF API (her bölge); yoksa cloudflared. Idempotent."""
+    if _cf_token() and _cf_tunnel_id():
+        return route_dns_api(host)
     if not ROUTE_DNS:
         return True, 'route_dns kapalı (wildcard kullanılıyor)'
     r = _docker('exec', CONTAINER, 'cloudflared', 'tunnel', 'route', 'dns', TUNNEL, host)
