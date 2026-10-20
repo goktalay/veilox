@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HEPGO ERP — İşletmenizin sinir sistemi</title>
+  <meta name="description" content="Fabrika yönetiminden bakkal POS'una, berber randevusundan restoran masasına — HEPGO işletmenizin türüne göre şekillenen tek canlı platformdur." />
+  <link rel="icon" href="/static/img/hepgo-mark.png" />
+  <meta name="theme-color" content="#0b0d10" />
+  <link rel="stylesheet" href="/static/fonts/fonts.css?v=1" />
+  <link rel="stylesheet" href="/static/exp/styles.css?v=1" />
+</head>
+<body>
+  <header class="nav">
+    <a class="nav__logo" href="/" aria-label="Sorvine home"><svg class="sorvine-mark" viewBox="0 0 24 24" aria-hidden="true"><defs><radialGradient id="sorvine-logo"><stop offset="0" stop-color="#cfe0ff" /><stop offset="1" stop-color="#4189fd" /></radialGradient></defs><path d="M10.2 3.6A8.6 8.6 0 0 0 6.4 19.2" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-dasharray="0 4" /><path d="M13.8 20.4A8.6 8.6 0 0 0 17.6 4.8" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" /><circle cx="12" cy="12" r="2.9" fill="url(#sorvine-logo)" /></svg><span>HEPGO</span></a>
+
+    <nav class="nav__menu" id="nav-menu" aria-label="Primary">
+      <ul class="nav__list">
+        <li><a class="nav__link" href="#top" aria-current="page">Ana Sayfa</a></li>
+        <li><a class="nav__link" href="#product">Platform</a></li>
+        <li><a class="nav__link" href="#platform">Çözümler</a></li>
+        <li><a class="nav__link" href="/platform">Modüller</a></li>
+        <li><a class="nav__link" href="/platform#fiyatlar">Fiyatlar</a></li>
+        <li><a class="nav__link" href="/platform#guvenlik">Güvenlik</a></li>
+      </ul>
+    </nav>
+
+    <div class="nav__end">
+      <div class="nav__item nav__lang">
+        <button class="nav__lang-toggle" type="button" aria-haspopup="true" aria-expanded="false" aria-controls="menu-lang" aria-label="Language: English">
+          <svg class="nav__globe" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="9" /><path d="M3 12h18M12 3c2.5 2.6 3.7 5.6 3.7 9s-1.2 6.4-3.7 9c-2.5-2.6-3.7-5.6-3.7-9S9.5 5.6 12 3Z" /></g></svg>
+          <span class="nav__lang-label">EN</span>
+        </button>
+        <div class="nav__dropdown" id="menu-lang" role="menu" aria-label="Language">
+          <button class="nav__option" type="button" role="menuitemradio" aria-checked="true" data-lang="en">English</button>
+          <button class="nav__option" type="button" role="menuitemradio" aria-checked="false" data-lang="es">Español</button>
+        </div>
+      </div>
+      <a class="btn btn--outline nav__login" href="/giris">Giriş</a>
+      <button class="nav__burger" type="button" aria-expanded="false" aria-controls="nav-menu" aria-label="Menu">
+        <span></span>
+      </button>
+    </div>
+  </header>
+
+  <canvas class="hands" data-particles="/static/exp/assets/points.bin" data-brain="/static/exp/assets/brain.bin" aria-hidden="true"></canvas>
+
+  <main>
+    <section class="hero" data-snap>
+      <p class="hero__eyebrow">KOBİ ve esnaf için tek platform</p>
+      <h1 class="hero__title">
+        <span class="hero__title-muted">İşletmenizin</span>
+        <span class="hero__title-strong">sinir sistemi.</span>
+      </h1>
+      <p class="hero__lead">
+        Fabrika yönetiminden bakkal POS'una, berber randevusundan restoran masasına —<br />
+        HEPGO işletmenizin türüne göre şekillenen tek canlı platformdur.
+      </p>
+      <div class="hero__actions">
+        <a class="btn btn--outline" href="/platform">Platformu keşfet</a>
+        <a class="btn btn--glow" href="/giris#kayit">
+          Hemen başlayın
+          <span class="btn__icon" aria-hidden="true">
+            <svg width="16" height="16" viewBox="0 0 16 16"><path d="M3 8h10M9 4l4 4-4 4" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+          </span>
+        </a>
+      </div>
+      <div
+        class="hero__visual"
+        data-hands="from"
+        data-source="2200x768"
+        data-origin="1042,268"
+        role="img"
+        aria-label="Two hands made of glowing data points reaching toward each other"
+      ></div>
+      <a class="hero__scroll" href="#product" data-snap-next>Aşağı kaydır</a>
+    </section>
+
+    <section class="reach" id="product" aria-labelledby="reach-title" data-snap>
+      <div
+        class="reach__visual"
+        data-hands="to"
+        data-source="2400x1500"
+        data-origin="1200,720"
+        data-reach="28"
+        role="img"
+        aria-label="The same hands, human and machine, opening around the message between them"
+      ></div>
+      <div class="reach__copy">
+        <p class="reach__eyebrow">Tek canlı platform</p>
+        <h2 class="reach__title" id="reach-title">
+          <span class="reach__title-muted">Fabrikadan esnafa,</span>
+          <span>tek canlı akış.</span>
+        </h2>
+        <p class="reach__text">Üretim, satış, stok, saha ve kasa — her işlem gerçek zamanlı akar, ekibiniz asıl işine odaklanır.</p>
+      </div>
+    </section>
+
+    <section class="hold" id="platform" aria-labelledby="hold-title" data-snap="3">
+      <span class="hold__snap" aria-hidden="true"></span>
+      <span class="hold__snap" aria-hidden="true"></span>
+      <div class="hold__stage">
+        <div
+          class="hold__visual"
+          data-hands="hold"
+          data-source="620x800"
+          data-origin="312,154"
+          data-sphere="312,154,104"
+          role="img"
+          aria-label="An open hand with a sphere of glowing data points floating above the palm"
+        ></div>
+        <div class="hold__intro hold__reveal">
+          <p class="hold__eyebrow">İşletmenizin merkezi</p>
+          <h2 class="hold__title" id="hold-title">
+            <span class="hold__title-muted">İşletmeniz</span>
+            <span>avucunuzun içinde.</span>
+          </h2>
+        </div>
+        <div class="hold__detail hold__reveal" data-steps>
+          <p class="hold__eyebrow">
+            <span class="hold__step is-active">Kur</span><span class="hold__dot" aria-hidden="true"> · </span><span class="hold__step">Yönet</span><span class="hold__dot" aria-hidden="true"> · </span><span class="hold__step">Büyü</span>
+          </p>
+          <div class="hold__texts">
+            <p class="hold__text is-active">Kaydolun, işletme tipinizi seçin; modülleriniz anında kurulur. KOBİ'yseniz üretimden finansa, esnafsanız yazarkasadan randevuya — ekranınız işinize göre şekillenir.</p>
+            <p class="hold__text">Üretim, stok, satış, saha, İK ve finans tek yerde; herkes yalnızca yetkili olduğu modülü görür, veriniz gerçek zamanlı akar.</p>
+            <p class="hold__text">7 dilde, bulutta ya da kendi sunucunuzda; mobil uygulamayla cebinizde. İşletmeniz büyüdükçe HEPGO da sizinle büyür.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="/static/exp/js/nav.js"></script>
+  <script src="/static/exp/js/nav-dust.js"></script>
+  <script src="/static/exp/js/particles.js"></script>
+  <script src="/static/exp/js/steps.js"></script>
+  <script src="/static/exp/js/snap.js"></script>
+</body>
+</html>

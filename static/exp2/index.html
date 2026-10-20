@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEPGO ERP — İşletmenizin sinir sistemi</title>
+<meta name="description" content="HEPGO: KOBİ, esnaf ve dron firmaları için bulut ERP — üretim, stok, satış, saha, İK, finans ve yazarkasa tek ekranda. Fabrikadan bakkala, berberden lokantaya.">
+
+
+
+
+  <link rel="stylesheet" href="/static/fonts/fonts.css?v=1">
+  <link rel="stylesheet" href="/static/exp2/inline.css?v=1">
+  <link rel="stylesheet" href="/static/exp2/kit-theme.css?v=4">
+  <script src="/static/exp2/kit.js?v=4" data-site="hepgo" data-i18n="/static/exp2/i18n" defer></script>
+  <link rel="icon" href="/static/img/hepgo-mark.png">
+</head>
+<body>
+
+<!-- logo mark: overlapping rounded diamonds, blue→cyan gradient -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="lgm" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#e63946"/><stop offset="1" stop-color="#22b8d4"/>
+    </linearGradient>
+  </defs>
+</svg>
+
+<!-- ============ NAV ============ -->
+<nav class="nav" aria-label="Main">
+  <a class="nav-logo" href="#top" aria-label="HEPGO ana sayfa">
+    <img src="/static/img/hepgo-mark.png" width="26" height="26" alt="" style="border-radius:7px;display:block">
+    HEPGO
+  </a>
+  <div class="nav-links">
+    <a href="#keytools">Modüller <svg width="10" height="6" viewBox="0 0 10 6" fill="none"><path d="M1 1l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></a>
+    <a href="#ekranlar">Ekranlar</a>
+    <a href="#pricing">Fiyatlar</a>
+    <a href="/giris">Giriş</a>
+  </div>
+  <span data-kit-controls></span>
+  <a class="nav-cta" href="/giris#kayit">Hemen başla</a>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="hero" id="top" data-globe>
+  <svg class="hero-chart-bg" viewBox="0 0 460 560" fill="none" aria-hidden="true">
+    <g stroke="#e4e4ec" stroke-width="1">
+      <line x1="40" y1="0" x2="40" y2="560"/><line x1="140" y1="0" x2="140" y2="560"/><line x1="240" y1="0" x2="240" y2="560"/><line x1="340" y1="0" x2="340" y2="560"/>
+      <line x1="0" y1="80" x2="460" y2="80"/><line x1="0" y1="180" x2="460" y2="180"/><line x1="0" y1="280" x2="460" y2="280"/><line x1="0" y1="380" x2="460" y2="380"/><line x1="0" y1="480" x2="460" y2="480"/>
+    </g>
+    <g fill="#c9cad4" font-family="Inter,sans-serif" font-size="12" font-weight="500">
+      <text x="0" y="84">70K</text><text x="0" y="184">60K</text><text x="0" y="284">50K</text><text x="0" y="384">40K</text><text x="0" y="484">30K</text><text x="360" y="84">100K</text><text x="370" y="184">20K</text>
+    </g>
+  </svg>
+  <div class="wrap">
+    <div class="hero-badge" data-hero><span class="badge"><span class="dot"></span>KOBİ ve esnaf için tek platform</span></div>
+    <h1 aria-label="İşletmenizi tek ekrandan yönetin">
+      <span class="line"><span data-hero-line>İşletmenizi</span></span>
+      <span class="line"><span data-hero-line>tek ekrandan yönetin</span></span>
+    </h1>
+    <p class="hero-sub" data-hero>Üretim, stok, satış, saha, İK, finans ve yazarkasa — hepsi gerçek zamanlı, tek ekranda. İşletmeniz ister fabrika ister bakkal, HEPGO türünüze göre şekillenir.</p>
+    <div data-hero><a class="btn btn-dark btn-glow" href="/giris#kayit">Hemen başlayın</a></div>
+    <p class="hero-micro" data-hero>Beta döneminde ücretsiz · kurulum anında</p>
+
+    <div class="hero-dash" data-hero-dash>
+      <img class="hero-shot" src="/static/img/landing/shots/pano.webp?v=2" alt="HEPGO Kişisel Pano ekranı">
+    </div>
+  </div>
+</section>
+
+<!-- ============ SOCIAL PROOF ============ -->
+<section class="social">
+  <div class="wrap">
+    <p data-reveal>HEPGO ile <strong>1.000+ işletme</strong> tek ekrandan yönetiliyor</p>
+  </div>
+  <div class="marquee" data-reveal aria-hidden="true">
+    <div class="marquee-track">
+      <span class="mlogo"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l10 10-10 10L2 12z"/></svg>Gökkubbe</span>
+      <span class="mlogo"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Türkbey</span>
+      <span class="mlogo"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="3"/></svg>MKE</span>
+      <span class="mlogo"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 20L12 4l8 16z"/></svg>Caymaz</span>
+      <span class="mlogo"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 5a5 5 0 110 10 5 5 0 010-10z"/></svg>Veilox</span>
+      <span class="mlogo"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l10 10-10 10L2 12z"/></svg>Gökkubbe</span>
+      <span class="mlogo"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="9"/></svg>Türkbey</span>
+      <span class="mlogo"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><rect x="4" y="4" width="16" height="16" rx="3"/></svg>MKE</span>
+      <span class="mlogo"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M4 20L12 4l8 16z"/></svg>Caymaz</span>
+      <span class="mlogo"><svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 100 20 10 10 0 000-20zm0 5a5 5 0 110 10 5 5 0 010-10z"/></svg>Veilox</span>
+    </div>
+  </div>
+</section>
+
+<!-- ============ WHY ============ -->
+<section class="why" id="why">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="badge" data-reveal>⚡ Güç Paketi</span>
+      <h2 class="sec" data-reveal>İşletmeler neden HEPGO seçiyor</h2>
+      <p class="sub" data-reveal>HEPGO işin angaryasını kaldırır; üretim, stok, satış ve kasayı tek ekranda görünür kılar.</p>
+    </div>
+    <div class="bento">
+      <div class="bcard" data-reveal>
+        <div class="mock">
+          <div class="taskrow"><div class="tt"><div><b>Üretim planlama</b><i>09:00 – 10:00</i></div></div><div class="astack"><img class="avatar" src="/static/exp2/assets/avatars/a2.png" alt=""><img class="avatar" src="/static/exp2/assets/avatars/a3.png" alt=""><img class="avatar" src="/static/exp2/assets/avatars/a4.png" alt=""></div></div>
+          <div class="taskrow"><div class="tt"><div><b>Stok değerlendirme</b><i>10:00 – 11:00</i></div></div><div class="astack"><img class="avatar" src="/static/exp2/assets/avatars/a3.png" alt=""><img class="avatar" src="/static/exp2/assets/avatars/a1.png" alt=""></div></div>
+          <div class="taskrow"><div class="tt"><div><b>Müşteri görüşmesi</b><i>11:00 – 12:00</i></div></div><div class="astack"><img class="avatar" src="/static/exp2/assets/avatars/a4.png" alt=""><img class="avatar" src="/static/exp2/assets/avatars/a2.png" alt=""><img class="avatar" src="/static/exp2/assets/avatars/a1.png" alt=""></div></div>
+        </div>
+        <h3>Görev & Aktivite Takibi</h3>
+        <p>Görev atayın, randevu planlayın, ekibin aktivitesini tek ekrandan izleyin.</p>
+      </div>
+      <div class="bcard" data-reveal>
+        <div class="mock">
+          <div class="bars">
+            <div class="bar"><span style="width:42%;background:var(--blue)"></span></div>
+            <div class="bar"><span style="width:78%;background:var(--pink)"></span></div>
+            <div class="bar"><span style="width:22%;background:var(--cyan)"></span></div>
+          </div>
+          <div class="blegend">
+            <i style="--c:var(--blue)">Üretim</i>
+            <i style="--c:var(--pink)">Satış</i>
+            <i style="--c:var(--cyan)">Saha</i>
+          </div>
+        </div>
+        <h3>Gerçek Zamanlı Akış</h3>
+        <p>Üretim, stok ve satış hareketleri siz çalışırken anlık güncellenir.</p>
+      </div>
+      <div class="bcard" data-reveal>
+        <div class="mock">
+          <div class="mini-stats">
+            <div class="mini-stat"><div class="lbl">Toplam İşlem</div><div class="val">7,869</div><div class="delta dn" style="color:var(--red)">-2% vs last month</div></div>
+            <div class="mini-stat"><div class="lbl">Toplam Müşteri</div><div class="val">7,368</div><div class="delta up" style="color:var(--green)">+3% vs last month</div></div>
+            <div class="mini-stat"><div class="lbl">Tamamlanma</div><div class="val">34%</div><div class="delta up" style="color:var(--green)">+6% vs last month</div></div>
+            <div class="mini-stat"><div class="lbl">Ort. Sepet</div><div class="val">₺18,2B</div><div class="delta up" style="color:var(--green)">+9% vs last month</div></div>
+          </div>
+        </div>
+        <h3>Raporlama & Analitik</h3>
+        <p>Satış, üretim ve personel performansına dair detaylı raporlar üretin.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ KEY TOOLS ============ -->
+<section class="keytools" id="keytools">
+  <div class="wrap">
+    <div class="kt-grid" id="ktPin">
+      <div class="kt-left">
+        <span class="badge" style="align-self:flex-start">⚡ Temel Araçlar</span>
+        <h2 class="sec">İşinizi ileri taşıyan<br>akıllı araçlar</h2>
+        <div class="kt-tabs" role="tablist" aria-label="Key tools">
+          <button class="kt-tab on" role="tab" aria-selected="true" data-kt="0">Otomasyon</button>
+          <button class="kt-tab" role="tab" aria-selected="false" data-kt="1">Sipariş Takibi</button>
+          <button class="kt-tab" role="tab" aria-selected="false" data-kt="2">Entegrasyonlar</button>
+        </div>
+      </div>
+      <div class="kt-right">
+        <div class="kt-panel on" data-kp="0">
+          <div class="mock-card">
+            <div class="greet"><b>Günaydın, Selin</b>
+              <div class="gicons">
+                <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 18v-6a9 9 0 0118 0v6"/><path d="M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3zM3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3z"/></svg></span>
+                <span><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 01-3.4 0"/></svg></span>
+              </div>
+            </div>
+            <div class="dash-balance" style="box-shadow:none">
+              <div><div class="lbl">Bakiye</div><div class="amt">₺48.920</div></div>
+              <p class="note">Bu ay cironuz <b>₺48.920</b> arttı</p>
+              <svg width="130" height="50" viewBox="0 0 150 56" fill="none"><path d="M2 46 C20 44 28 30 44 32 S72 44 88 30 S124 8 148 12" stroke="#16a34a" stroke-width="2.4" stroke-linecap="round"/></svg>
+            </div>
+          </div>
+          <div class="cap"><b>Otomasyon</b><p>Hatırlatma, takip ve veri girişi gibi tekrar eden işleri otomatikleştirin; ekibiniz işine odaklansın.</p></div>
+        </div>
+        <div class="kt-panel" data-kp="1">
+          <div class="mock-card">
+            <b style="font-size:14.5px;display:block;margin-bottom:14px">Tüm siparişlerinizi yönetin</b>
+            <table class="deals-table">
+              <thead><tr><th>Firma</th><th>Tutar</th><th>Aşama</th><th>Olasılık</th></tr></thead>
+              <tbody>
+                <tr><td>Akım Metal</td><td class="amt">₺75,000</td><td><span class="stage prop">Teklif</span></td><td><div class="prob"><div class="pbar"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></div><span>65%</span></div></td></tr>
+                <tr><td>Demir A.Ş.</td><td class="amt">₺15,000</td><td><span class="stage neg">Pazarlık</span></td><td><div class="prob"><div class="pbar"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div><span>95%</span></div></td></tr>
+                <tr><td>Berk Tekstil</td><td class="amt">₺12,000</td><td><span class="stage disc">Görüşme</span></td><td><div class="prob"><div class="pbar"><i class="f"></i><i class="f"></i><i></i><i></i><i></i></div><span>55%</span></div></td></tr>
+                <tr><td>Can Gıda</td><td class="amt">₺19,000</td><td><span class="stage won">Tamamlandı</span></td><td><div class="prob"><div class="pbar"><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i><i class="f"></i></div><span>100%</span></div></td></tr>
+                <tr><td>Yıldız Ltd.</td><td class="amt">₺20,000</td><td><span class="stage neg">Pazarlık</span></td><td><div class="prob"><div class="pbar"><i class="f"></i><i class="f"></i><i class="f"></i><i></i><i></i></div><span>65%</span></div></td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="cap"><b>Sipariş Takibi</b><p>Her fırsatı ilk temastan teslimata kadar canlı aşama, tutar ve olasılıkla izleyin.</p></div>
+        </div>
+        <div class="kt-panel" data-kp="2">
+          <div class="mock-card">
+            <div class="kan-legend">
+              <span><i class="kdot" style="background:var(--blue)"></i>Tamamlandı <b>₺82.800</b></span>
+              <span><i class="kdot" style="background:var(--indigo)"></i>Bekleyen <b>₺53.500</b></span>
+              <span><i class="kdot" style="background:var(--pink)"></i>Potansiyel <b>₺17.000</b></span>
+            </div>
+            <div class="kan-grid">
+              <div class="kcard"><b>Mavi Market</b><div class="amt">₺5,555 <i>Aylık</i></div><p>Gelecek hafta randevu planla</p><div class="kfoot"><img class="avatar" src="/static/exp2/assets/avatars/a2.png" alt=""><span>🕐 1h</span></div></div>
+              <div class="kcard lift"><b>Öz Berber</b><div class="amt">₺5,789 <i>Aylık</i></div><p>Gelecek hafta randevu planla</p><div class="kfoot"><img class="avatar" src="/static/exp2/assets/avatars/a3.png" alt=""><span>🕐 1h</span></div></div>
+              <div class="kcard"><b>Lezzet Lokanta</b><div class="amt">₺789 <i>Aylık</i></div><p>Gelecek hafta randevu planla</p><div class="kfoot"><img class="avatar" src="/static/exp2/assets/avatars/a4.png" alt=""><span>🕐 1h</span></div></div>
+              <div class="kcard"><b>Nur Bakkal</b><div class="amt">₺4,859 <i>Aylık</i></div><p>Gelecek hafta randevu planla</p><div class="kfoot"><img class="avatar" src="/static/exp2/assets/avatars/a1.png" alt=""><span>🕐 1h</span></div></div>
+              <div class="kcard"><b>Star Kuaför</b><div class="amt">₺836 <i>Aylık</i></div><p>Gelecek hafta randevu planla</p><div class="kfoot"><img class="avatar" src="/static/exp2/assets/avatars/a2.png" alt=""><span>🕐 1h</span></div></div>
+              <div class="kcard ghost">Yeni Sipariş</div>
+            </div>
+          </div>
+          <div class="cap"><b>Entegrasyonlar</b><p>Mikro ERP, kişiler ve siparişleri mevcut sisteminizle eşitleyin; taşıma ve çift giriş yok.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ DARK PANEL ============ -->
+<section class="dark">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="badge" data-reveal style="background:var(--darkcard);border-color:var(--darkline);color:#d7d7de">✦ Tam Paket</span>
+      <h2 class="sec" data-reveal>HEPGO neler sunar?</h2>
+      <p class="sub" data-reveal>HEPGO işin angaryasını kaldırır; üretim, stok, satış ve kasayı tek ekranda görünür kılar.</p>
+    </div>
+    <div class="dgrid">
+      <div class="dcard" data-reveal>
+        <div class="icn"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="1.8" stroke-linecap="round"><rect x="7" y="7" width="10" height="10" rx="2"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l1.5 1.5M17.5 17.5L19 19M19 5l-1.5 1.5M6.5 17.5L5 19"/></svg></div>
+        <h3>Üretim & İş Emri</h3><p>Siparişten üretime, depoya ve montaja; parça seviyesinde canlı takip.</p>
+      </div>
+      <div class="dcard" data-reveal>
+        <div class="icn"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="1.8" stroke-linecap="round"><circle cx="6" cy="6" r="2.6"/><circle cx="6" cy="18" r="2.6"/><circle cx="18" cy="12" r="2.6"/><path d="M8.3 7.3l7.4 3.4M8.3 16.7l7.4-3.4"/></svg></div>
+        <h3>Stok & Fiyat</h3><p>Çok depolu stok, kritik stok uyarısı ve fiyat yönetimi — Excel kaosu olmadan.</p>
+      </div>
+      <div class="dcard" data-reveal>
+        <div class="icn"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 12h4l2-7 2 14 2-7h2"/></svg></div>
+        <h3>Yazarkasa (POS)</h3><p>Esnaf için dokunmatik yazarkasa, kamera barkod ve fiş; berber randevu, lokanta adisyon.</p>
+      </div>
+      <div class="dcard" data-reveal>
+        <div class="icn"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="1.8" stroke-linecap="round"><path d="M3 17l5-6 4 4 6-8 3 4"/><path d="M3 21h18"/></svg></div>
+        <h3>Finans & Raporlama</h3><p>Kasa, banka, cari ve ön muhasebe; gerçek zamanlı gelir-gider ve KPI raporları.</p>
+      </div>
+      <div class="dcard" data-reveal>
+        <div class="icn"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="1.8" stroke-linecap="round"><circle cx="5" cy="12" r="2.4"/><circle cx="19" cy="6" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M7.2 10.8l9.6-3.6M7.2 13.2l9.6 3.6"/></svg></div>
+        <h3>Saha & İK</h3><p>Saha görevleri, araç ve rota kaydı, canlı konum; hafif personel yönetimi.</p>
+      </div>
+      <div class="dcard" data-reveal>
+        <div class="icn"><svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="#f43f5e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l8 4v6c0 5-3.5 8.5-8 10-4.5-1.5-8-5-8-10V6z"/><path d="M9 12l2 2 4-4"/></svg></div>
+        <h3>Yetki Kontrolü</h3><p>Rol bazlı izinler; herkes yalnızca yetkili olduğu modülü ve veriyi görür.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ GROWTH GEAR ============ -->
+<section class="growth">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="badge" data-reveal>🧩 Modüller</span>
+      <h2 class="sec" data-reveal>Modülleriniz iş başında</h2>
+      <p class="sub" data-reveal>Randevudan sahaya, müşteri kartından stok takibine — jenerik değil, gerçek HEPGO ekranları.</p>
+    </div>
+    <div class="gtabs" data-reveal role="tablist" aria-label="Analytics views">
+      <button class="gtab on" data-gt="0" role="tab" aria-selected="true"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#14b8a6" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M8 2v4M16 2v4M3 10h18"/></svg>Randevu Takvimi</button>
+      <button class="gtab" data-gt="1" role="tab" aria-selected="false"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#e63946" stroke-width="2"><path d="M12 2l9 5-9 5-9-5z"/><path d="M3 12l9 5 9-5"/></svg>Saha Yönetimi</button>
+      <button class="gtab" data-gt="2" role="tab" aria-selected="false"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#ec4899" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="M21 21l-4.3-4.3"/></svg>Müşteri Kartı</button>
+    </div>
+    <div class="analytics" data-reveal>
+      <img id="gtShot" class="gt-shot" src="/static/img/landing/shots/randevu.webp?v=2" alt="HEPGO Randevu Takvimi ekranı" loading="lazy">
+    </div>
+  </div>
+</section>
+
+<!-- ============ TESTIMONIALS ============ -->
+<section class="testi">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="badge" data-reveal>Müşteri Yorumları</span>
+      <h2 class="sec" data-reveal>1.000+ işletme<br>HEPGO ile büyüyor</h2>
+    </div>
+    <div class="tgrid">
+      <div class="tstat pink" data-reveal><div class="num">32%</div><div class="cap">Angarya azaldı</div></div>
+      <div class="tquote" data-reveal>
+        <p>"HEPGO üretimden kasaya her şeyi tek ekrana topladı. Artık Excel’lerle değil işimizle uğraşıyoruz."</p>
+        <div class="who"><img class="avatar" src="/static/exp2/assets/avatars/a3.png" alt="Zeynep Kaya"><div><b>Zeynep Kaya</b><i>Gökkubbe · Operasyon Müdürü</i></div></div>
+      </div>
+    </div>
+    <div class="tgrid2">
+      <div class="tstat white" data-reveal><div class="num">18%</div><div class="cap">Verimlilik arttı</div></div>
+      <div class="tstat blue" data-reveal><div class="num">₺42M</div><div class="cap">Yıllık etkilenen ciro</div></div>
+      <div class="tquote stand" data-reveal>
+        <p>"HEPGO bir yazılımdan fazlası; ekibimizin bir parçası gibi. Daha düzenli, odaklı ve hızlıyız."</p>
+        <div class="who"><img class="avatar" src="/static/exp2/assets/avatars/a5.png" alt="Mert Demir"><div><b>Mert Demir</b><i>Türkbey · Kurucu</i></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ PRICING ============ -->
+<section class="pricing" id="pricing">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="badge" data-reveal>Beta erişimi</span>
+      <h2 class="sec" data-reveal>Beta dönemindeyiz</h2>
+      <p class="sub" data-reveal>HEPGO şu an beta aşamasında — tüm modüller ücretsiz. Sınırlı sayıda beta koltuğu açtık; dolmadan yerinizi alın.</p>
+    </div>
+    <div class="beta-seats" data-reveal>
+      <div class="seat-num"><span id="seatLeft">—</span><span class="seat-total">/ 100 koltuk</span></div>
+      <div class="seat-bar"><div class="seat-fill" id="seatFill"></div></div>
+      <p class="seat-note" id="seatNote">Kalan beta koltuğu hesaplanıyor…</p>
+    </div>
+    <div class="pcards">
+      <div class="pcard" data-reveal>
+        <h3>KOBİ</h3>
+        <p class="pdesc">Üretim yapan KOBİ’ler için: ihtiyacınıza göre modül seçin.</p>
+        <div class="price-beta">Beta döneminde <b>ücretsiz</b></div>
+        <a class="btn btn-outline" href="#cta">Hemen başlayın</a>
+        <div class="get">Neler dahil:</div>
+        <div class="pfeat">Üretim, stok, satın alma, satış, finans</div>
+        <div class="pfeat">İK, evrak ve raporlama</div>
+        <div class="pfeat">E-posta desteği</div>
+      </div>
+      <div class="pcard feat" data-reveal>
+        <h3>KOBİ + Esnaf</h3>
+        <p class="pdesc">Tüm modüller + esnaf paketleri (bakkal/berber/lokanta).</p>
+        <div class="price-beta">Beta döneminde <b>ücretsiz</b></div>
+        <a class="btn btn-dark" href="#cta">Hemen başlayın</a>
+        <div class="get">Neler dahil:</div>
+        <div class="pfeat">Üretim, stok, satın alma, satış, finans</div>
+        <div class="pfeat">Esnaf Kasa, Bölümler, Rezervasyon, Garson</div>
+        <div class="pfeat">Öncelikli e-posta & canlı destek</div>
+      </div>
+      <div class="pcard" data-reveal>
+        <h3>Dron</h3>
+        <p class="pdesc">Dron operasyonu yürüten firmalar için: uçuştan rotaya tek panel.</p>
+        <div class="price-beta">Beta döneminde <b>ücretsiz</b></div>
+        <a class="btn btn-outline" href="#cta">Hemen başlayın</a>
+        <div class="get">Neler dahil:</div>
+        <div class="pfeat">Canlı uçuş, telemetri ve kalkış kontrol listesi</div>
+        <div class="pfeat">Dron envanteri, rotalar, görev planlama ve köprüler</div>
+        <div class="pfeat">Saha görevleri, müşteriler, finans ve evrak</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FAQ ============ -->
+<section class="faq">
+  <div class="wrap">
+    <div class="faq-grid">
+      <div class="faq-left">
+        <span class="badge" data-reveal>SSS</span>
+        <h2 class="sec" data-reveal>Sıkça Sorulan<br>Sorular</h2>
+        <p class="sub" data-reveal>İşletmelerin en çok sorduğu soruların yanıtları.</p>
+      </div>
+      <div>
+        <div class="acc open" data-reveal>
+          <button class="acc-head" aria-expanded="true">Verilerim HEPGO’da güvende mi?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="acc-body"><p>Evet. Verileriniz şifreli, rol bazlı erişim ve gece yedeklemeleriyle korunur. İsterseniz kendi sunucunuzda da barındırabilirsiniz.</p></div>
+        </div>
+        <div class="acc" data-reveal>
+          <button class="acc-head" aria-expanded="false">Mikro ve mevcut sistemlerimle çalışır mı?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="acc-body"><p>HEPGO, Mikro ERP ile fatura/stok senkronu ve e-posta (Google/Microsoft) entegrasyonu sunar; kişiler ve siparişler elle aktarım olmadan eşitlenir.</p></div>
+        </div>
+        <div class="acc" data-reveal>
+          <button class="acc-head" aria-expanded="false">Üretim ve hedef takibi yapabilir miyim?<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></button>
+          <div class="acc-body"><p>Evet — iş emri, üretim ve satış hedeflerini tanımlayın; panolarda canlı ilerleme ve raporlarla izleyin.</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SHOWCASE ============ -->
+<section class="showcase" id="ekranlar">
+  <div class="wrap">
+    <div class="sec-head">
+      <span class="badge" data-reveal>🖥️ Gerçek ekranlar</span>
+      <h2 class="sec" data-reveal>HEPGO'yu iş başında görün</h2>
+      <p class="sub" data-reveal>Üretim, saha, finans, yazıcı yönetimi ve daha fazlası — jenerik değil, HEPGO'nun gerçek ekranları.</p>
+    </div>
+    <div class="shot-grid" data-reveal>
+      <figure><img src="/static/img/landing/shots/dashboard.webp?v=2" alt="Firma yönetimi" loading="lazy"><figcaption>Firma yönetimi</figcaption></figure>
+      <figure><img src="/static/img/landing/shots/orders.webp?v=2" alt="Üretim yönetimi" loading="lazy"><figcaption>Üretim yönetimi</figcaption></figure>
+      <figure><img src="/static/img/landing/shots/fabrika.webp?v=2" alt="Fabrika yerleşimi" loading="lazy"><figcaption>Fabrika yerleşimi</figcaption></figure>
+      <figure><img src="/static/img/landing/shots/printers.webp?v=2" alt="Yazıcı yönetimi" loading="lazy"><figcaption>Yazıcı yönetimi</figcaption></figure>
+      <figure><img src="/static/img/landing/shots/reports.webp?v=2" alt="Raporlar (22+)" loading="lazy"><figcaption>Raporlar (22+)</figcaption></figure>
+      <figure><img src="/static/img/landing/shots/field.webp?v=2" alt="Saha yönetimi" loading="lazy"><figcaption>Saha yönetimi</figcaption></figure>
+    </div>
+    <div class="shot-grid mob" data-reveal>
+      <figure><img src="/static/img/landing/shots/m-live.webp?v=2" alt="Sosyal akış" loading="lazy"><figcaption>Sosyal akış</figcaption></figure>
+      <figure><img src="/static/img/landing/shots/mob-meet.webp?v=2" alt="Görüntülü toplantı" loading="lazy"><figcaption>Görüntülü toplantı</figcaption></figure>
+      <figure><img src="/static/img/landing/shots/m-urun.webp?v=2" alt="Ürün yönetimi" loading="lazy"><figcaption>Ürün yönetimi</figcaption></figure>
+      <figure><img src="/static/img/landing/shots/mascot3d.webp?v=2" alt="Yapay zekâ asistan" loading="lazy"><figcaption>Yapay zekâ asistan</figcaption></figure>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FINAL CTA ============ -->
+<section class="cta" id="cta">
+  <div class="wrap">
+    <img class="mark" data-reveal src="/static/img/hepgo-mark.png" width="52" height="52" alt="" style="border-radius:13px">
+    <h2 data-reveal>İşletmenizi tek ekrandan yönetmeye hazır mısınız?</h2>
+    <p data-reveal>Hemen kaydolun, dakikalar içinde başlayın. Beta döneminde ücretsiz.</p>
+    <div data-reveal><a class="btn btn-dark btn-glow" href="/giris#kayit">Hemen başlayın</a></div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="foot-brand" data-reveal>
+        <a class="nav-logo" href="#top" style="font-size:19px">
+          <img src="/static/img/hepgo-mark.png" width="26" height="26" alt="" style="border-radius:7px;display:block">
+          HEPGO
+        </a>
+        <p>HEPGO, KOBİ ve esnaf için tek canlı platform — üretimden kasaya her iş tek ekranda.</p>
+        <div class="socials">
+          <a href="#" aria-label="X"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M18.9 2H22l-6.8 7.8L23.3 22h-6.3l-4.9-6.4L6.4 22H3.3l7.3-8.3L1 2h6.5l4.4 5.9L18.9 2zm-1.1 18h1.7L7.1 3.9H5.3L17.8 20z"/></svg></a>
+          <a href="#" aria-label="LinkedIn"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M4.98 3.5A2.5 2.5 0 112.5 6a2.48 2.48 0 012.48-2.5zM3 8.75h4V21H3zM9.5 8.75h3.8v1.7h.06a4.18 4.18 0 013.76-2c4 0 4.76 2.63 4.76 6.05V21h-4v-5.5c0-1.31 0-3-1.84-3s-2.13 1.43-2.13 2.9V21h-4z"/></svg></a>
+          <a href="#" aria-label="Instagram"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></svg></a>
+          <a href="#" aria-label="Telegram"><svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M21.9 4.6L18.8 19c-.2 1-.8 1.2-1.6.8l-4.5-3.3-2.2 2.1c-.2.2-.4.4-.9.4l.3-4.6L18.6 7c.4-.3-.1-.5-.6-.2L7.7 13.2l-4.4-1.4c-1-.3-1-1 .2-1.4l17.2-6.6c.8-.3 1.5.2 1.2.8z"/></svg></a>
+        </div>
+      </div>
+      <div class="foot-col" data-reveal>
+        <h5>Keşfet</h5>
+        <a href="#keytools">Modüller</a><a href="#ekranlar">Ekranlar</a><a href="#pricing">Beta Erişimi</a><a href="#why">Neden HEPGO</a>
+      </div>
+      <div class="foot-col" data-reveal>
+        <h5>Kaynaklar</h5>
+        <a href="/gizlilik">Gizlilik</a><a href="/kullanim-sartlari">Kullanım Şartları</a><a href="/beta-sozlesmesi">Beta Sözleşmesi</a><a href="/giris">Giriş</a>
+      </div>
+      <div class="foot-col" data-reveal>
+        <h5>Kurumsal</h5>
+        <a href="/kullanim-sartlari">Kullanım Şartları</a><a href="/gizlilik">Gizlilik Politikası</a><a href="/beta-sozlesmesi">Beta Sözleşmesi</a>
+      </div>
+    </div>
+  </div>
+  <div class="foot-bar">© 2026 HEPGO · Veilox Teknoloji. Tüm hakları saklıdır.</div>
+</footer>
+
+<script src="/static/exp2/assets/vendor/gsap.min.js"></script>
+<script src="/static/exp2/assets/vendor/ScrollTrigger.min.js"></script>
+
+  <script src="/static/exp2/inline.js?v=2"></script>
+</body>
+</html>

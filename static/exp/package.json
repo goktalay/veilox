@@ -1,0 +1,10 @@
+{
+  "name": "sorvine",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sorvine landing page: static HTML, CSS and JavaScript with canvas particle scenes.",
+  "scripts": {
+    "start": "npx --yes serve .",
+    "build": "node scripts/inline.js dist/index.html"
+  }
+}

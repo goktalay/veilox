@@ -1,0 +1,3 @@
+# Veilox (hepgo kullanıcısı) yeni firma kurulumu: yalnız yardımcı betik ve tünelin yeniden başlatılması.
+# Kurulum: install -o root -g root -m 0440 sudoers-hepgo-veilox /etc/sudoers.d/hepgo-veilox && visudo -cf /etc/sudoers.d/hepgo-veilox
+hepgo ALL=(root) NOPASSWD: /usr/local/sbin/hepgo-tenant install *, /usr/local/sbin/hepgo-tenant remove *, /usr/bin/systemctl restart cloudflared, /usr/bin/systemctl reload cloudflared

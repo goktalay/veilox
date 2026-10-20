@@ -1,0 +1,64 @@
+#!/bin/bash
+# hepgo-tenant install|remove <slug> — Veilox'un (hepgo kullanıcısı) yeni firma servisini kurup kaldırması için.
+# Root'a aittir; hepgo yalnız bunu sudo ile çalıştırabilir (deploy/sudoers-hepgo-veilox).
+# Birim dosyası BU şablondan üretilir: firma adı / kullanıcı girdisi birime hiç girmez (yalnız doğrulanmış slug).
+# Elle kurulmuş servislere (işaret satırı olmayan birimler: caymaz, turkbey, merkez, veilox…) asla dokunulmaz.
+# Kurulum: install -o root -g root -m 0755 hepgo-tenant /usr/local/sbin/hepgo-tenant
+set -euo pipefail
+APP=${HEPGO_APP:-/opt/hepgo/caymazbuild}
+BASE=hepgo.com
+UNIT_DIR=${HEPGO_UNIT_DIR:-/etc/systemd/system}   # sudo ortamı sıfırlar; yalnız root/test elle verebilir
+SYSTEMCTL=${HEPGO_SYSTEMCTL:-systemctl}
+MARK='# hepgo-tenant: otomatik birim (Veilox). Elle düzenlemeyin.'
+
+[ $# -eq 2 ] || { echo "kullanım: hepgo-tenant install|remove <slug>" >&2; exit 2; }
+ACTION=$1; SLUG=$2
+[[ "$SLUG" =~ ^[a-z0-9][a-z0-9-]{0,39}$ ]] || { echo "geçersiz firma kimliği: $SLUG" >&2; exit 2; }
+case "$SLUG" in caymaz|gokkubbe|turkbey|merkez|veilox|www|api) echo "ayrılmış ad: $SLUG" >&2; exit 2;; esac
+T=$APP/tenants/$SLUG
+UNIT=$UNIT_DIR/hepgo-$SLUG.service
+
+managed() { [ -f "$UNIT" ] && head -1 "$UNIT" | grep -qxF "$MARK"; }
+
+case $ACTION in
+  install)
+    [ -f "$T/.env" ] || { echo "$T/.env yok (önce Veilox firma dosyalarını üretmeli)" >&2; exit 3; }
+    if [ -e "$UNIT" ] && ! managed; then echo "$UNIT elle kurulmuş; dokunulmadı" >&2; exit 4; fi
+    cat > "$UNIT.tmp" <<UNIT
+$MARK
+[Unit]
+Description=HEPGO — firma $SLUG ($SLUG.$BASE)
+After=network-online.target
+[Service]
+User=hepgo
+Group=hepgo
+WorkingDirectory=$APP
+Environment=TZ=Europe/Istanbul
+Environment=CAYMAZ_UDS=/run/hepgo/$SLUG.sock
+Environment=CAYMAZ_ENV_FILE=$T/.env
+Environment=CAYMAZ_DATA_DIR=$T/data
+Environment=CAYMAZ_BRAND_DIR=$T/brand
+Environment=CAYMAZ_LOCAL_UPLOAD=0
+Environment=CAYMAZ_PUBLIC_URL=https://$SLUG.$BASE
+ExecStart=$APP/run.sh
+Restart=always
+RestartSec=5
+TimeoutStopSec=8
+[Install]
+WantedBy=multi-user.target
+UNIT
+    chmod 0644 "$UNIT.tmp"; mv "$UNIT.tmp" "$UNIT"
+    $SYSTEMCTL daemon-reload
+    $SYSTEMCTL enable --now "hepgo-$SLUG.service"
+    echo "kuruldu: hepgo-$SLUG.service"
+    ;;
+  remove)
+    [ -e "$UNIT" ] || { echo "birim yok: hepgo-$SLUG.service"; exit 0; }
+    managed || { echo "$UNIT elle kurulmuş; dokunulmadı" >&2; exit 4; }
+    $SYSTEMCTL disable --now "hepgo-$SLUG.service" || true
+    rm -f "$UNIT"
+    $SYSTEMCTL daemon-reload
+    echo "kaldırıldı: hepgo-$SLUG.service (veri klasörü korunur: $T)"
+    ;;
+  *) echo "bilinmeyen işlem: $ACTION" >&2; exit 2 ;;
+esac

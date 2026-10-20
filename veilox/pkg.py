@@ -9,6 +9,8 @@ import os
 import time
 import zipfile
 from pathlib import Path
+from . import settings
+settings.load()   # .env, aşağıdaki ayarlar okunmadan önce (bkz. settings.py)
 
 APP_DIR = Path(os.environ.get('VEILOX_TENANT_APP_DIR', '/home/mkaderoglu/caymazbuild'))
 
@@ -58,6 +60,9 @@ Verileriniz yalnızca kendi sunucunuzdadır; düzenli yedek almayı unutmayın (
 
 
 def _env_text(company_name, master_user, full_name, admin_pass, modules):
+    from .provision import one_line
+    company_name, master_user, full_name, admin_pass = map(one_line, (company_name, master_user, full_name, admin_pass))
+    modules = [one_line(m) for m in modules]
     return (
         f'# {company_name} — Fabrika Yönetim Sistemi (offline kurulum)\n'
         f'CAYMAZ_ADMIN_USERNAME={master_user}\n'

@@ -9,6 +9,8 @@ import os
 import sqlite3
 import time
 from pathlib import Path
+from . import settings
+settings.load()   # .env, aşağıdaki ayarlar okunmadan önce (bkz. settings.py)
 
 BASE = Path(__file__).resolve().parent.parent
 DATA_DIR = Path(os.environ.get('VEILOX_DATA_DIR', BASE / 'data'))
@@ -60,6 +62,7 @@ CREATE TABLE IF NOT EXISTS companies (
     package_id INTEGER REFERENCES packages(id) ON DELETE SET NULL,
     mode TEXT NOT NULL DEFAULT 'online',  -- online | offline
     modules TEXT NOT NULL DEFAULT '[]',
+    firm_type TEXT NOT NULL DEFAULT 'kobi',  -- kobi | esnaf | dron (kayıtta seçilen firma tipi)
     white_label INTEGER NOT NULL DEFAULT 0,
     master_username TEXT NOT NULL,
     master_name TEXT DEFAULT '',
@@ -84,6 +87,16 @@ CREATE TABLE IF NOT EXISTS download_tokens (
     expires_at TEXT NOT NULL,
     downloaded_at TEXT
 );
+
+-- Kayıt e-posta doğrulama kodları (6 haneli, 10 dk geçerli; e-posta başına tek kayıt)
+CREATE TABLE IF NOT EXISTS email_codes (
+    email      TEXT PRIMARY KEY,
+    code_hash  TEXT NOT NULL,
+    expires_at TEXT NOT NULL,
+    attempts   INTEGER NOT NULL DEFAULT 0,
+    sent_at    TEXT NOT NULL,
+    verified_at TEXT
+);
 """
 
 
@@ -96,6 +109,16 @@ def init():
             conn.execute('ALTER TABLE companies ADD COLUMN socket TEXT')
         if 'white_label' not in cols:
             conn.execute('ALTER TABLE companies ADD COLUMN white_label INTEGER NOT NULL DEFAULT 0')
+        for col in ('phone', 'tax_no', 'city', 'country', 'logo'):   # self-kayıt: iletişim/fatura + ülke + logo yolu
+            if col not in cols:
+                conn.execute(f'ALTER TABLE companies ADD COLUMN {col} TEXT')
+        if 'email_verified' not in cols:           # kayıtta e-posta doğrulandı mı
+            conn.execute('ALTER TABLE companies ADD COLUMN email_verified INTEGER NOT NULL DEFAULT 0')
+        if 'firm_type' not in cols:                # kayıtta seçilen firma tipi (kobi | esnaf)
+            conn.execute("ALTER TABLE companies ADD COLUMN firm_type TEXT NOT NULL DEFAULT 'kobi'")
+        ecols = [r[1] for r in conn.execute('PRAGMA table_info(email_codes)')]
+        if 'verified_at' not in ecols:             # kod modal'da doğrulandıysa (şifre adımından önce)
+            conn.execute('ALTER TABLE email_codes ADD COLUMN verified_at TEXT')
         pcols = [r[1] for r in conn.execute('PRAGMA table_info(packages)')]
         if 'white_label' not in pcols:
             conn.execute('ALTER TABLE packages ADD COLUMN white_label INTEGER NOT NULL DEFAULT 0')

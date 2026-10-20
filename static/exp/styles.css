@@ -1,0 +1,1056 @@
+:root {
+  --bg: #000;
+  --text: #fff;
+  --text-muted: #8a8a8a;
+  --text-soft: #c4c4c4;
+  --surface-light: #fcfcfc;
+  --ink: #111;
+  --primary: #e63946;
+  --primary-soft: #ff8a93;
+  --text-dim: rgba(255, 255, 255, 0.62);
+  --glass-line: rgba(255, 255, 255, 0.07);
+  --glass-edge: rgba(255, 255, 255, 0.2);
+  --font: "Space Grotesk", "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Geist runs a little wide: phones narrow the hero title by this much so
+     it keeps its two lines. */
+  --title-fit: 0.945;
+
+  /* Design px: the layout is drawn for a 1470x936 screen and grows with
+     larger ones (1.15 at 1920x1080); shorter laptops shrink it a little so
+     every scene still fits one screen. */
+  --u: clamp(0.8px, min(100vw / 1470, 100vh / 936), 1.4px);
+  --gutter-start: calc(173 * var(--u));
+  --gutter-end: calc(161 * var(--u));
+  /* The hero column sits 3px right of the viewport centre. */
+  --hero-shift: 3px;
+  /* One size for every pill button, in the nav and in the hero. */
+  --btn-h: 44px;
+  --btn-font: 14.5px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overflow-x: clip;
+}
+
+body {
+  margin: 0;
+  overflow-x: clip;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ---------- Nav ---------- */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* Fixed at the top. Scrolling down dissolves it into particles and
+   scrolling back up gathers it again (js/nav-dust.js). */
+.nav {
+  position: fixed;
+  inset: 16px 0 auto;
+  z-index: 10;
+  transition: opacity 140ms ease;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 var(--gutter-end) 0 var(--gutter-start);
+}
+
+.nav--gone {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The dust the navbar turns into; drawn over it while it comes and goes. */
+.nav-dust {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 11;
+  pointer-events: none;
+}
+
+/* The Sorvine mark: particles on the left (the machine hand), a solid arc
+   on the right (the human one) and the blue spark between them. */
+.nav__logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  justify-self: start;
+  font-size: 25px;
+  font-weight: 650;
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.sorvine-mark {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  color: #fff;
+}
+
+/* One dark pill holding the links and the app CTA. */
+.nav__menu {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(28, 28, 30, 0.92), rgba(16, 16, 18, 0.92));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 0 0 1px rgba(0, 0, 0, 0.6),
+    0 14px 36px -14px rgba(0, 0, 0, 0.9);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+}
+
+.nav__list {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  margin: 0;
+  padding: 0 0 0 6px;
+  list-style: none;
+}
+
+.nav__item {
+  position: relative;
+}
+
+.nav__link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 40px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: rgba(255, 255, 255, 0.66);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: color 160ms ease, background-color 160ms ease;
+}
+
+.nav__link:hover,
+.nav__link[aria-expanded="true"] {
+  color: var(--text);
+}
+
+.nav__link[aria-current="page"] {
+  color: var(--text);
+}
+
+.nav__lang-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: var(--btn-h);
+  padding: 0 18px 0 16px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.82);
+  font: inherit;
+  font-size: var(--btn-font);
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  cursor: pointer;
+  transition: color 160ms ease, border-color 160ms ease, background-color 160ms ease;
+}
+
+.nav__lang-toggle:hover,
+.nav__lang-toggle[aria-expanded="true"] {
+  border-color: rgba(255, 255, 255, 0.34);
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.nav__globe {
+  opacity: 0.85;
+}
+
+.nav__dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  z-index: 1;
+  display: grid;
+  gap: 2px;
+  min-width: 150px;
+  padding: 6px;
+  border: 1px solid var(--glass-line);
+  border-radius: 16px;
+  /* Nearly opaque: backdrop-filter does not work inside .nav__menu, which
+     already has one, so the page would show through. */
+  background: rgba(16, 16, 18, 0.97);
+  box-shadow: 0 24px 60px -20px rgba(0, 0, 0, 0.9), inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px) scale(0.98);
+  transform-origin: top center;
+  transition: opacity 180ms ease, transform 180ms ease, visibility 0s 180ms;
+}
+
+[aria-expanded="true"] + .nav__dropdown {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.nav__option {
+  display: grid;
+  gap: 2px;
+  padding: 10px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: none;
+  color: var(--text);
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.nav__option:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.nav__option[aria-checked="true"] {
+  color: var(--primary-soft);
+}
+
+.nav__option-text {
+  color: var(--text-muted);
+  font-size: 12.5px;
+  font-weight: 400;
+}
+
+.nav__end {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-self: end;
+}
+
+.nav__login {
+  padding: 0 22px;
+}
+
+.nav__burger {
+  display: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.nav__burger span,
+.nav__burger span::before,
+.nav__burger span::after {
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  border-radius: 1px;
+  background: currentColor;
+  transition: transform 200ms ease, opacity 200ms ease;
+}
+
+.nav__burger span {
+  position: relative;
+}
+
+.nav__burger span::before,
+.nav__burger span::after {
+  content: "";
+  position: absolute;
+  left: 0;
+}
+
+.nav__burger span::before {
+  top: -5px;
+}
+
+.nav__burger span::after {
+  top: 5px;
+}
+
+.nav--open .nav__burger span {
+  background: transparent;
+}
+
+.nav--open .nav__burger span::before {
+  transform: translateY(5px) rotate(45deg);
+}
+
+.nav--open .nav__burger span::after {
+  transform: translateY(-5px) rotate(-45deg);
+}
+
+.nav a:focus-visible,
+.nav button:focus-visible,
+.btn:focus-visible,
+.hero__scroll:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+/* ---------- Buttons ---------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--btn-h);
+  padding: 0 26px;
+  border-radius: 999px;
+  font-size: var(--btn-font);
+  font-weight: 500;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+  transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 160ms ease;
+}
+
+.btn:active {
+  transform: scale(0.98);
+}
+
+/* Secondary: hairline outline on black. */
+.btn--outline {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(255, 255, 255, 0.015);
+  color: var(--text);
+}
+
+.btn--outline:hover {
+  border-color: rgba(255, 255, 255, 0.42);
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Primary: lit white pill with a soft halo and a black arrow disc. */
+.btn--glow {
+  gap: 14px;
+  padding: 0 5px 0 24px;
+  border: 1px solid #fff;
+  background: linear-gradient(180deg, #ffffff 0%, #ececec 55%, #d6d6d6 100%);
+  color: #1b1b1b;
+  box-shadow:
+    0 0 18px rgba(255, 255, 255, 0.3),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 #fff;
+}
+
+.btn--glow:hover {
+  box-shadow:
+    0 0 26px 2px rgba(255, 255, 255, 0.42),
+    inset 0 -3px 6px rgba(0, 0, 0, 0.1),
+    inset 0 1px 0 #fff;
+}
+
+.btn__icon {
+  display: grid;
+  place-items: center;
+  width: calc(var(--btn-h) - 10px);
+  height: calc(var(--btn-h) - 10px);
+  border-radius: 50%;
+  background: #111;
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+
+.btn__icon svg {
+  transition: transform 200ms ease;
+}
+
+.btn--glow:hover .btn__icon svg {
+  transform: translateX(2px);
+}
+
+/* ---------- Hero ---------- */
+
+.hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* At least one full screen, so the next scene starts below the fold. */
+  min-height: max(890 * var(--u), 100vh);
+  min-height: max(890 * var(--u), 100svh);
+  /* The eyebrow takes the top of this space, so the title keeps its place. */
+  padding: calc(250 * var(--u) - 31 * var(--u)) 0 0 calc(var(--hero-shift) * 2);
+  text-align: center;
+}
+
+.hero__title {
+  margin: 0;
+  font-size: calc(41 * var(--u));
+  font-weight: 700;
+  line-height: calc(44 * var(--u));
+  letter-spacing: -0.03em;
+}
+
+.hero__title span {
+  display: block;
+}
+
+/* A light lead-in and a bold close, both white. */
+.hero__title-muted {
+  font-weight: 400;
+}
+
+.hero__lead {
+  margin: calc(13 * var(--u)) 0 0;
+  font-size: calc(16 * var(--u));
+  line-height: calc(25 * var(--u));
+  letter-spacing: -0.035em;
+  color: var(--text-soft);
+}
+
+.hero__actions {
+  display: flex;
+  align-items: center;
+  gap: calc(14 * var(--u));
+  margin-top: calc(22 * var(--u));
+}
+
+/* A quiet cue at the foot of the first screen, under the hands: grey,
+   wide-tracked capitals, no box. It glides to the next scene (js/snap.js). */
+.hero__scroll {
+  position: absolute;
+  bottom: calc(26 * var(--u));
+  left: calc(50% + var(--hero-shift));
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  height: calc(32 * var(--u));
+  padding: 0 calc(12 * var(--u)) 0 calc(12 * var(--u) + 0.32em);
+  color: var(--text-muted);
+  font-size: calc(11 * var(--u));
+  font-weight: 500;
+  letter-spacing: 0.32em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transform: translateX(-50%);
+  transition: color 200ms ease;
+}
+
+.hero__scroll:hover,
+.hero__scroll:focus-visible {
+  color: var(--text-soft);
+}
+
+/* Particle hands: one fixed canvas draws them over the whole page (see
+   js/particles.js). The hero and reach boxes only mark where each pose sits. */
+.hands {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100vh;
+  height: 100lvh;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 600ms ease;
+}
+
+.hands.is-ready {
+  opacity: 1;
+}
+
+main {
+  position: relative;
+  z-index: 1;
+}
+
+.hero__visual {
+  position: absolute;
+  top: calc(520 * var(--u));
+  left: calc(50% - 539 * var(--u));
+  width: calc(1100 * var(--u));
+  aspect-ratio: 2200 / 768;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* ---------- Reach scene ---------- */
+
+/* The hero hands open and settle here, reaching in from opposite corners;
+   the copy sits in the gap between them and appears once they arrive. */
+.reach {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Exactly one screen tall, so the pose rests centred when the section
+     fills the screen; the wider artwork is cropped. */
+  height: 100vh;
+  height: 100svh;
+  overflow: hidden;
+}
+
+/* js/particles.js levels both hands at the box's vertical middle; --gap
+   lifts the left hand and lowers the right one by that share of the box. */
+.reach__visual {
+  --gap: 0;
+  /* Wider than the screen, so both wrists run off its edges (they end at
+     the artwork's edges). The levelled hands are about a third of the width
+     tall: short screens cap the width so they still fit. */
+  --reach-w: min(106vw, 100vh * 2.55);
+  position: relative;
+  flex: none;
+  width: var(--reach-w);
+  margin: 0 calc((100% - var(--reach-w)) / 2);
+  aspect-ratio: 2400 / 1500;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Nudged right of centre, into the space between the fingertips. It opens
+   out of the hero spark, which js/particles.js carries to its centre. */
+.reach__copy {
+  position: absolute;
+  inset: 0 0 0 6%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  text-align: center;
+  opacity: 0;
+  filter: blur(10px);
+  transform: scale(0.2);
+  transition: opacity 900ms ease, filter 1100ms ease, transform 1100ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Faint blue light behind the copy, as if the hands were lighting it. Wide,
+   eased stops and a blur so it has no visible edge. */
+.reach__copy::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -1;
+  width: min(900 * var(--u), 120vw);
+  height: calc(560 * var(--u));
+  border-radius: 50%;
+  background: radial-gradient(
+    closest-side,
+    rgba(65, 137, 253, 0.075),
+    rgba(65, 137, 253, 0.05) 25%,
+    rgba(65, 137, 253, 0.024) 50%,
+    rgba(65, 137, 253, 0.007) 75%,
+    transparent
+  );
+  filter: blur(32px);
+  transform: translate(-50%, -50%);
+}
+
+.reach__visual.is-formed ~ .reach__copy {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+.hero__eyebrow,
+.reach__eyebrow,
+.hold__eyebrow {
+  margin: 0 0 calc(14 * var(--u));
+  color: var(--primary-soft);
+  font-size: calc(12.5 * var(--u));
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.reach__title,
+.hold__title {
+  margin: 0;
+  font-size: calc(46 * var(--u));
+  font-weight: 700;
+  line-height: 1.04;
+  letter-spacing: -0.035em;
+}
+
+.reach__title span,
+.hold__title span {
+  display: block;
+}
+
+.reach__title-muted,
+.hold__title-muted {
+  font-weight: 400;
+}
+
+.reach__text,
+.hold__text {
+  max-width: calc(340 * var(--u));
+  margin: calc(16 * var(--u)) 0 0;
+  color: var(--text-soft);
+  font-size: calc(15.5 * var(--u));
+  line-height: 1.5;
+  letter-spacing: -0.02em;
+}
+
+/* Two lines at most. */
+.reach__text {
+  max-width: calc(470 * var(--u));
+}
+
+/* ---------- Hold scene ---------- */
+
+/* The left hand opens into a palm and the right one becomes the sphere
+   floating above it (js/particles.js), centred on the screen. The title
+   sits in the upper left corner and the description in the lower right;
+   both appear once the hand and sphere have formed. The section is taller
+   than the screen: its stage pins while the description steps through
+   Learn, Reason and Act (js/steps.js). */
+.hold {
+  /* Artwork width: as large as the screen height allows, and narrow enough
+     to leave the corners free for the copy. */
+  --hold-w: min(620 * var(--u), (100vh - 120 * var(--u)) * 620 / 800, (100vw - 600 * var(--u)) * 1.2);
+  --steps: 3;
+  position: relative;
+  /* One screen for the stage, plus most of a screen of scroll per step. */
+  height: calc(100vh + (var(--steps) - 1) * 75vh);
+  height: calc(100svh + (var(--steps) - 1) * 75svh);
+}
+
+/* One grid cell shared by the artwork and both copy blocks, so each can
+   pin itself to its own corner of the screen. */
+.hold__stage {
+  position: sticky;
+  top: 0;
+  display: grid;
+  height: 100vh;
+  height: 100svh;
+  padding: calc(72 * var(--u)) var(--gutter-end) calc(64 * var(--u)) var(--gutter-start);
+}
+
+.hold__stage > * {
+  grid-area: 1 / 1;
+}
+
+/* The wrist ends at the artwork's bottom edge: anchor it below the screen's
+   bottom edge so the arm runs off it. */
+.hold__visual {
+  align-self: end;
+  justify-self: center;
+  margin-bottom: calc(-88 * var(--u));
+  width: var(--hold-w);
+  aspect-ratio: 620 / 800;
+  pointer-events: none;
+  user-select: none;
+}
+
+.hold__reveal {
+  opacity: 0;
+  filter: blur(8px);
+  transform: translateY(14px) scale(0.98);
+  transition: opacity 1100ms ease, filter 1100ms ease, transform 1100ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.hold__visual.is-formed ~ .hold__reveal {
+  opacity: 1;
+  filter: none;
+  transform: none;
+}
+
+/* The description follows the title by a beat. */
+.hold__visual.is-formed ~ .hold__detail {
+  transition-delay: 220ms;
+}
+
+.hold__intro {
+  align-self: start;
+  justify-self: start;
+}
+
+/* The title's lines stay whole; the screen corner has room for them. */
+.hold__title span {
+  white-space: nowrap;
+}
+
+/* A thin rule down the left side, with a short glowing blue segment on top. */
+.hold__detail {
+  position: relative;
+  align-self: end;
+  justify-self: end;
+  padding: 2px 0 2px calc(26 * var(--u));
+  border-left: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+/* The segment slides down the rule as the steps advance. */
+.hold__detail::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--step, 0) * (100% - 34 * var(--u)));
+  left: -1px;
+  width: 1px;
+  height: calc(34 * var(--u));
+  background: var(--primary-soft);
+  box-shadow: 0 0 8px rgba(65, 137, 253, 0.8);
+  transition: top 700ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.hold__detail .hold__eyebrow {
+  margin-bottom: 0;
+}
+
+/* The current step's word lights up; the others wait dimmed. */
+.hold__step,
+.hold__dot {
+  opacity: 0.36;
+  transition: opacity 500ms ease, text-shadow 500ms ease;
+}
+
+.hold__step.is-active {
+  opacity: 1;
+  text-shadow: 0 0 12px rgba(65, 137, 253, 0.55);
+}
+
+/* All descriptions share one cell, so the block keeps the height of the
+   longest and only the current one shows. */
+.hold__texts {
+  display: grid;
+  margin-top: calc(12 * var(--u));
+}
+
+.hold__texts .hold__text {
+  grid-area: 1 / 1;
+  margin: 0;
+  opacity: 0;
+  filter: blur(6px);
+  transform: translateY(8px);
+  transition: opacity 600ms ease, filter 600ms ease, transform 600ms cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+.hold__texts .hold__text.is-active {
+  opacity: 1;
+  filter: none;
+  transform: none;
+  transition-delay: 120ms;
+}
+
+/* ---------- Responsive ---------- */
+
+@media (max-width: 1100px) {
+  :root {
+    --gutter-start: 32px;
+    --gutter-end: 32px;
+    --hero-shift: 0px;
+  }
+
+  .hero__visual {
+    left: 50%;
+    width: min(1100px, 120vw);
+    transform: translateX(-49%);
+  }
+}
+
+/* Below 900px the menu moves into a panel opened by the burger button. */
+@media (max-width: 900px) {
+  .nav {
+    grid-template-columns: 1fr auto;
+  }
+
+  .nav__burger {
+    display: grid;
+  }
+
+  .nav__menu {
+    position: absolute;
+    top: calc(100% + 12px);
+    left: var(--gutter-start);
+    right: var(--gutter-end);
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    padding: 8px;
+    border-radius: 22px;
+    background: rgba(16, 16, 18, 0.97);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: opacity 200ms ease, transform 200ms ease, visibility 0s 200ms;
+  }
+
+  .nav--open .nav__menu {
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    transition-delay: 0s;
+  }
+
+  .nav__list {
+    flex-direction: column;
+    align-items: stretch;
+    padding: 0;
+  }
+
+  .nav__link {
+    width: 100%;
+    height: 44px;
+    border-radius: 14px;
+  }
+
+  .nav__link:hover,
+  .nav__link[aria-expanded="true"] {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .nav__menu .nav__dropdown {
+    position: static;
+    display: none;
+    width: auto;
+    margin-top: 4px;
+    border: 0;
+    background: rgba(255, 255, 255, 0.03);
+    box-shadow: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    transform: none;
+  }
+
+  .nav__menu [aria-expanded="true"] + .nav__dropdown {
+    display: grid;
+    transform: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .hero {
+    min-height: 100vh;
+    min-height: 100svh;
+    justify-content: center;
+    padding: 72px 20px 0;
+  }
+
+  /* Shrinks on narrow phones so the bold close stays on one line. */
+  .hero__title {
+    font-size: calc(min(32px, 7.2vw) * var(--title-fit, 1));
+    line-height: 1.125;
+  }
+
+  .hero__lead {
+    font-size: 15px;
+    line-height: 23px;
+  }
+
+  .hero__lead br {
+    display: none;
+  }
+
+  .hero__actions {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .hero__scroll {
+    bottom: 22px;
+    left: 50%;
+    height: 30px;
+    padding: 0 10px 0 calc(10px + 0.3em);
+    font-size: 10.5px;
+    letter-spacing: 0.3em;
+  }
+
+  .hero__visual {
+    position: relative;
+    top: auto;
+    left: auto;
+    width: 150vw;
+    max-width: none;
+    margin: 40px 0 24px;
+    transform: none;
+  }
+}
+
+@media (min-width: 761px) and (max-width: 1180px) {
+  .reach__visual {
+    --gap: 0.1;
+    --reach-w: min(106vw, 100vh * 2400 / 1400);
+  }
+}
+
+@media (max-width: 760px) {
+  /* Wider than the screen so the hands stay large; the sides are cropped.
+     The hands stack above and below the text. */
+  .reach__visual {
+    --gap: 0.5;
+    --reach-w: 120vw;
+  }
+
+  .reach__copy {
+    inset: 0;
+  }
+
+  .hero__eyebrow,
+  .reach__eyebrow,
+  .hold__eyebrow {
+    margin-bottom: 10px;
+    font-size: 11px;
+  }
+
+  .reach__title,
+  .hold__title {
+    font-size: 28px;
+  }
+
+  .reach__text,
+  .hold__text {
+    max-width: 250px;
+    margin-top: 10px;
+    font-size: 13.5px;
+  }
+
+  .reach__text {
+    max-width: 340px;
+  }
+}
+
+@media (max-width: 1100px) {
+  /* Stacked: the title above the hand and sphere, the description below. */
+  .hold {
+    --hold-w: min(76vw, 360px, (100svh - 420px) * 620 / 800);
+  }
+
+  .hold__stage {
+    padding: 56px var(--gutter-end) 56px var(--gutter-start);
+    grid-template-rows: auto 1fr auto;
+    row-gap: 8px;
+  }
+
+  .hold__intro {
+    grid-area: 1 / 1;
+  }
+
+  .hold__visual {
+    grid-area: 2 / 1;
+    align-self: center;
+    min-width: 220px;
+    margin-bottom: 0;
+  }
+
+  .hold__detail {
+    grid-area: 3 / 1;
+  }
+}
+
+@media (max-width: 760px) {
+  .hold__detail {
+    padding-left: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reach__copy,
+  .hold__reveal,
+  .hold__detail::before,
+  .hold__step,
+  .hold__dot,
+  .hold__texts .hold__text {
+    transition: none;
+  }
+}
+
+@media (max-width: 420px) {
+  .nav__end {
+    gap: 8px;
+  }
+
+  .nav__login {
+    padding: 0 16px;
+  }
+
+  .nav__lang-toggle {
+    justify-content: center;
+    width: var(--btn-h);
+    padding: 0;
+  }
+
+  .nav__lang-label {
+    display: none;
+  }
+}
+
+/* Even line lengths, so no word is left alone on the last line. */
+.hero__title,
+.hero__lead,
+.reach__title,
+.reach__text,
+.hold__text {
+  text-wrap: balance;
+}
+
+/* ---------- Scene snapping ---------- */
+
+/* With a mouse, wheel or keyboard, js/snap.js glides one scene at a time.
+   Touch screens snap natively: the hero, the reach scene and each step of
+   the hold scene. */
+.hold__snap {
+  position: absolute;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  pointer-events: none;
+}
+
+.hold__snap:nth-of-type(1) {
+  top: 75vh;
+  top: 75svh;
+}
+
+.hold__snap:nth-of-type(2) {
+  top: 150vh;
+  top: 150svh;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  html {
+    scroll-snap-type: y mandatory;
+  }
+
+  [data-snap],
+  .hold__snap {
+    scroll-snap-align: start;
+    scroll-snap-stop: always;
+  }
+}

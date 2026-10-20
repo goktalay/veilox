@@ -16,6 +16,8 @@ import subprocess
 from pathlib import Path
 
 from .passwd import make_hash  # noqa: F401  (merkez kaydı için PBKDF2 özet)
+from . import settings
+settings.load()   # .env, aşağıdaki ayarlar okunmadan önce (bkz. settings.py)
 
 APP_DIR = Path(os.environ.get('VEILOX_TENANT_APP_DIR', '/home/mkaderoglu/caymazbuild'))
 TENANTS_DIR = Path(os.environ.get('VEILOX_TENANTS_DIR', APP_DIR / 'tenants'))
@@ -26,14 +28,23 @@ EXEC = os.environ.get('VEILOX_PROVISION_EXEC', '1') != '0'
 # Soket ~/.cloudflared/sockets/ altında tutulur; bu klasör tünel konteynerine /cfhome/.cloudflared altında mount'ludur.
 CF_HOME = Path(os.environ.get('VEILOX_CF_HOME', Path.home() / '.cloudflared'))
 CF_HOME_CONTAINER = os.environ.get('VEILOX_CF_HOME_CONTAINER', '/cfhome/.cloudflared')
-SOCK_DIR = CF_HOME / 'sockets'
+SOCK_DIR = Path(os.environ.get('VEILOX_SOCK_DIR', CF_HOME / 'sockets'))
+# Sunucu modu (native cloudflared + sistem servisleri): birim dosyasını root'a ait yardımcı yazar/kaldırır
+# (deploy/hepgo-tenant; hepgo kullanıcısı yalnız onu sudo ile çalıştırabilir). Boşsa fabrika modu: kullanıcı servisi.
+UNIT_HELPER = os.environ.get('VEILOX_UNIT_HELPER', '').strip()
+UNIT_HELPER_SUDO = os.environ.get('VEILOX_UNIT_HELPER_SUDO', '1') != '0'   # test: 0
 USE_SOCKET = os.environ.get('VEILOX_USE_SOCKET', '1') != '0'
 
 SLUG_RE = re.compile(r'[^a-z0-9-]+')
 
 
+_TR = str.maketrans({'ç': 'c', 'ğ': 'g', 'ı': 'i', 'ö': 'o', 'ş': 's', 'ü': 'u', 'â': 'a', 'î': 'i', 'û': 'u', 'Ç': 'c', 'Ğ': 'g', 'İ': 'i', 'I': 'i', 'Ö': 'o', 'Ş': 's', 'Ü': 'u'})
+
+
 def slugify(name):
-    s = SLUG_RE.sub('-', (name or '').strip().lower()).strip('-')
+    """Firma adı → alt alan adı (Türkçe harfler sadeleşir: “Örnek Çelik A.Ş.” → ornek-celik-a-s)."""
+    s = SLUG_RE.sub('-', (name or '').strip().translate(_TR).lower()).strip('-')
+    s = re.sub(r'-{2,}', '-', s)[:40].strip('-')
     return s or 'firma'
 
 
@@ -80,27 +91,57 @@ def free_port(conn):
     raise RuntimeError('Boş port bulunamadı')
 
 
-def _env_text(admin_user, admin_pass, full_name, company_name, master_user, modules, white_label=False):
-    mods = ','.join(modules)
+# Satır sonu / kontrol karakteri (Unicode satır ayırıcıları dahil). .env ve systemd birimi satır tabanlıdır:
+# değerin içindeki bir satır sonu yeni bir ayar (ör. ExecStartPre=…) ekleyebilir.
+_CTRL = re.compile(r'[\x00-\x1f\x7f\x85\u2028\u2029]')
+
+
+def has_ctrl(value):
+    return bool(_CTRL.search(str(value or '')))
+
+
+def one_line(value):
+    """.env / systemd birimine yazılacak değer: kontrol karakterleri boşluğa çevrilir, tek satır kalır."""
+    return _CTRL.sub(' ', str(value or '')).strip()
+
+
+def _env_text(admin_user, admin_pass, full_name, company_name, master_user, modules, white_label=False, must_change=False, lang='', esnaf_pkg='',
+              drone_pkg=False):
+    admin_user, admin_pass, full_name, company_name, master_user = map(
+        one_line, (admin_user, admin_pass, full_name, company_name, master_user))
+    mods = ','.join(one_line(m) for m in modules)
+    lang = one_line(lang or '').strip().lower()
+    lang_line = f'CAYMAZ_ADMIN_LANG={lang}\n' if lang in ('tr', 'en', 'de', 'fr', 'es', 'ar', 'ru') else ''
+    esnaf_pkg = one_line(esnaf_pkg or '').strip().lower()
+    esnaf_line = f'CAYMAZ_ESNAF_PKG={esnaf_pkg}\n' if esnaf_pkg in ('bakkal', 'berber', 'lokanta') else ''
+    esnaf_line += 'CAYMAZ_DRONE_PKG=1\n' if drone_pkg else ''   # Dron paketi: Dron Yönetimi yalnız bu pakette görünür
+    # Şifreyi kullanıcı kendi belirlediyse (kayıt sihirbazı) ilk girişte değiştirmesi İSTENMEZ;
+    # şifre merkez tarafından rastgele üretildiyse ilk girişte değiştirmesi istenir.
     return (
         f'# {company_name} — HEPGO ERP (merkez tarafından oluşturuldu)\n'
         '# Yönetici bilgileri yalnızca ilk kurulumda okunur; sonra şifre uygulamadan değiştirilir.\n'
         f'CAYMAZ_ADMIN_USERNAME={admin_user}\n'
         f'CAYMAZ_ADMIN_PASSWORD={admin_pass}\n'
         f'CAYMAZ_ADMIN_FULL_NAME={full_name}\n'
+        f'CAYMAZ_ADMIN_MUST_CHANGE={"1" if must_change else "0"}\n'
+        f'{lang_line}'
+        f'{esnaf_line}'
         f'CAYMAZ_COMPANY_NAME={company_name}\n'
         f'CAYMAZ_MASTER_USERNAME={master_user}\n'
         f'CAYMAZ_MODULES={mods}\n'
         f'CAYMAZ_WHITE_LABEL={"1" if white_label else "0"}\n'
         'CAYMAZ_SEED_SPARE_STOCK=0\n'
+        'CAYMAZ_CONSOLE=0\n'   # web terminal: çok firmalı sunucuda kapalı
     )
 
 
 def _unit_text(name, url, bind_env, env_file, data_dir, brand_dir):
     """bind_env: ('CAYMAZ_UDS', soket_yolu) ya da ('PORT', '8091')."""
+    # Tek satır; '%' systemd belirtecidir (%%), satır sonundaki '\' bir sonraki satırı birleştirir
+    desc = one_line(f'{name}{(" (" + url + ")") if url else ""}').replace('%', '%%').rstrip('\\')
     return (
         '[Unit]\n'
-        f'Description=Fabrika Yönetim Sistemi — {name}{(" (" + url + ")") if url else ""}\n'
+        f'Description=Fabrika Yönetim Sistemi — {desc}\n'
         'After=network-online.target\n\n'
         '[Service]\n'
         f'WorkingDirectory={APP_DIR}\n'
@@ -124,8 +165,18 @@ def _systemctl(*args):
     return subprocess.run(cmd, capture_output=True, text=True, timeout=120)
 
 
-def provision_online(conn, company):
-    """company: companies satırı (dict). Dosyaları üretir, servisi başlatır, DB'yi günceller. (ok, detail) döner."""
+def _helper(action, slug):
+    cmd = (['sudo', '-n'] if UNIT_HELPER_SUDO else []) + [UNIT_HELPER, action, slug]
+    r = subprocess.run(cmd, capture_output=True, text=True, timeout=180)
+    if r.returncode != 0:
+        raise RuntimeError(f'{Path(UNIT_HELPER).name} {action} başarısız: {(r.stderr or r.stdout).strip()[:300]}')
+    return r
+
+
+def provision_online(conn, company, do_reload=True):
+    """company: companies satırı (dict). Dosyaları üretir, servisi başlatır, DB'yi günceller. (ok, detail) döner.
+    do_reload=False → cloudflared tünel RELOAD'u yapılmaz (çağıran, HTTP yanıtından sonra arka planda tetikler;
+    reload bu isteğin kendi bağlantısını keserek yanlış 'Hata' göstermesini önlemek için)."""
     import json
     from . import db
     slug = company['slug']
@@ -141,12 +192,13 @@ def provision_online(conn, company):
     data_dir = tdir / 'data'
     brand_dir = tdir / 'brand'
     env_file = tdir / '.env'
-    service = f'caymaz-{slug}'
+    service = f'hepgo-{slug}' if UNIT_HELPER else f'caymaz-{slug}'
 
     # Bağlanma: Unix soket (tercih — port açılmaz) ya da (fallback) 127.0.0.1 portu
     if USE_SOCKET:
         host_sock = SOCK_DIR / f'{slug}.sock'
-        cont_sock = f'{CF_HOME_CONTAINER}/sockets/{slug}.sock'
+        # Tünel konteynerdeyse soket onun içindeki yoldan görülür; native cloudflared'da (sunucu) doğrudan
+        cont_sock = f'{CF_HOME_CONTAINER}/sockets/{slug}.sock' if CF_HOME_CONTAINER else str(host_sock)
         bind_env = ('CAYMAZ_UDS', str(host_sock))
         cf_service = f'unix:{cont_sock}'
         port = None
@@ -166,10 +218,28 @@ def provision_online(conn, company):
         for d in dirs:
             d.mkdir(parents=True, exist_ok=True)
         env_file.write_text(_env_text(master_user, admin_pass, full_name, name, master_user, modules,
-                                      white_label=bool(company.get('white_label'))), encoding='utf-8')
+                                      white_label=bool(company.get('white_label')),
+                                      must_change=not company.get('master_secret'),
+                                      lang=company.get('lang', ''),
+                                      esnaf_pkg=company.get('esnaf_pkg', ''),
+                                      drone_pkg=company.get('firm_type') == 'dron' or 'drone' in modules), encoding='utf-8')
         os.chmod(env_file, 0o600)
 
-        if EXEC:
+        # Firma logosu (kayıt sihirbazında yüklendiyse) → tenant markası: brand_dir/img/logo.png
+        logo_src = company.get('logo')
+        if logo_src and os.path.isfile(logo_src):
+            try:
+                from PIL import Image
+                im = Image.open(logo_src).convert('RGBA')
+                if im.width > 512:
+                    im = im.resize((512, max(1, round(im.height * 512 / im.width))))
+                im.save(str(brand_dir / 'img' / 'logo.png'))
+            except Exception:   # noqa: BLE001 — logo başarısızsa kurulum yine devam eder
+                pass
+
+        if EXEC and UNIT_HELPER:
+            _helper('install', slug)   # birim root şablonundan; firma adı birime girmez
+        elif EXEC:
             unit_path = SYSTEMD_DIR / f'{service}.service'
             SYSTEMD_DIR.mkdir(parents=True, exist_ok=True)
             unit_path.write_text(_unit_text(name, url, bind_env, env_file, data_dir, brand_dir), encoding='utf-8')
@@ -182,7 +252,7 @@ def provision_online(conn, company):
         from . import cloudflare as cf
         cf_host, cf_note = None, ''
         try:
-            cf_host, cf_note = cf.publish(slug, cf_service)
+            cf_host, cf_note = cf.publish(slug, cf_service, do_reload=do_reload)
             if cf_host and not url:
                 url = f'https://{cf_host}'
         except Exception as e:   # noqa: BLE001
@@ -205,9 +275,15 @@ def provision_online(conn, company):
 
 def deprovision(conn, company):
     """Firmayı durdurur ve servisi kaldırır (veri klasörü korunur)."""
-    service = company.get('service_name') or f"caymaz-{company['slug']}"
+    service = company.get('service_name') or (f"hepgo-{company['slug']}" if UNIT_HELPER else f"caymaz-{company['slug']}")
     detail = {}
-    if EXEC:
+    if EXEC and UNIT_HELPER:
+        try:
+            _helper('remove', company['slug'])
+            detail['unit_removed'] = True
+        except RuntimeError as e:
+            detail['unit_error'] = str(e)
+    elif EXEC:
         _systemctl('disable', '--now', service)
         unit = SYSTEMD_DIR / f'{service}.service'
         try:

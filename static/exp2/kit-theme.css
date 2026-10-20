@@ -1,0 +1,76 @@
+/* hepgo.com: Mastertool site kiti (kit.js — mastertool.download ile birebir aynı dosya) için denetim stilleri, dönen dünya
+   yerleşimi, gece teması ve sağdan sola düzen. Sayfanın açık (gündüz) görünümü inline.css'te aynen korunur. */
+.mtk-ctl { display: inline-flex; align-items: center; gap: 6px; }
+.mtk-ctl.mtk-float { position: fixed; top: 14px; inset-inline-end: 14px; z-index: 200; }
+.mtk-lang { position: relative; display: inline-flex; align-items: center; gap: 5px; height: 34px; padding: 0 10px; border-radius: 999px;
+  border: 1px solid var(--line); color: var(--body); cursor: pointer; font-size: 13px; }
+.mtk-lang svg { width: 15px; height: 15px; flex: 0 0 auto; }
+.mtk-lang select { appearance: none; -webkit-appearance: none; border: 0; background: transparent; color: var(--ink); font: inherit; font-weight: 600; cursor: pointer; outline: none; }
+.mtk-lang select option { color: #0b0b10; background: #fff; }
+.mtk-theme { display: inline-grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; border: 1px solid var(--line); color: var(--body); }
+.mtk-theme:hover, .mtk-lang:hover { color: var(--ink); }
+.mtk-theme svg { width: 16px; height: 16px; }
+.nav { width: max-content; max-width: calc(100vw - 24px); }   /* left:50% sabit konum: içerik genişliği (yarım ekrana sıkışmasın) */
+.nav > * { flex-shrink: 0; }
+.nav-cta { white-space: nowrap; }
+.nav .mtk-ctl { margin-inline-start: -8px; }
+@media (max-width: 860px) { .nav .mtk-lang { padding: 0 8px; } .nav .mtk-lang select { max-width: 64px; } }
+
+/* dönen dünya: başlığın arkasında, yumuşak */
+[data-globe] { isolation: isolate; }
+.mtk-globe { position: absolute; z-index: -1; pointer-events: none; left: 50%; top: 340px; width: min(940px, 96vw); aspect-ratio: 1; transform: translate(-50%, -50%);
+  opacity: .38; -webkit-mask-image: radial-gradient(closest-side, #000 60%, transparent 100%); mask-image: radial-gradient(closest-side, #000 60%, transparent 100%); }
+html[data-theme=dark] .mtk-globe { opacity: .45; }
+[dir=rtl] .mtk-globe { left: auto; right: 50%; transform: translate(50%, -50%); }
+:root { --globe: #5b5bd6; --globe2: #e63946; }
+html[data-theme=dark] { --globe: #818cf8; --globe2: #f4728b; }
+
+/* ---- gece teması ---- */
+html[data-theme=dark] { --ink: #f2f2f7; --body: #a7acb8; --mut: #7d8391; --line: #262a35; --soft: #101218; --soft2: #161922; --card: #14161d;
+  --sh-card: 0 1px 2px rgba(0,0,0,.3), 0 8px 24px rgba(0,0,0,.35); --sh-dash: 0 2px 6px rgba(0,0,0,.3), 0 24px 64px rgba(0,0,0,.5); }
+html[data-theme=dark] body { background: #0b0c11; }
+html[data-theme=dark] .nav { background: rgba(16,18,24,.82); box-shadow: 0 4px 20px rgba(0,0,0,.35); }
+html[data-theme=dark] .nav-links, html[data-theme=dark] .badge, html[data-theme=dark] .gtab, html[data-theme=dark] .atable td { color: #c4c8d2; }
+html[data-theme=dark] :is(.nav-cta, .btn-dark, .switch, .socials a) { background: #f2f2f7; color: #0b0b10; }
+html[data-theme=dark] :is(.nav-cta, .btn-dark):hover { background: #ffffff; }
+html[data-theme=dark] :is(.badge, .hero-dash, .dash, .pipe-tabs span.on, .pipe-tip, .bcard, .taskrow, .mini-stat, .mock-card, .kcard, .gtab,
+  .analytics, .tstat.white, .tquote.stand, .pcard, .btn-outline, .acc, .shot-grid figure, .beta-seats) { background: var(--card); }
+html[data-theme=dark] .dash-side { background: #12141a; }
+html[data-theme=dark] .dash-nav.active { background: #1c1f29; }
+html[data-theme=dark] :is(.dash-nav, .dash-head .icons span, .pipe-filter, .greet .gicons, .pipe-tabs span, .acc-head svg) { color: #9aa0ad; }
+html[data-theme=dark] :is(.tquote p, .pfeat) { color: #d4d7df; }
+html[data-theme=dark] .pfeat.off { color: #5d6270; }
+html[data-theme=dark] .astack img { border-color: var(--card); }
+html[data-theme=dark] .kcard.lift { border-color: #343846; }
+html[data-theme=dark] .kcard.ghost { border-color: #343846; }
+html[data-theme=dark] .pcard.feat { border-color: #f2f2f7; }
+html[data-theme=dark] .hero-chart-bg g[stroke] { stroke: #1c1f28; }
+html[data-theme=dark] .hero-chart-bg g[fill] { fill: #3a3e4a; }
+html[data-theme=dark] .dark { background: #07080b; }
+html[data-theme=dark] img.hero-shot, html[data-theme=dark] .shot-grid img { filter: brightness(.92); }
+
+/* ---- sağdan sola ---- */
+[dir=rtl] .nav { padding: 9px 20px 9px 10px; }
+[dir=rtl] .marquee-track { direction: ltr; }
+
+/* dil seçici: görünen etiket (geniş ekranda dil adı, dar ekranda kod), yerel <select> görünmez biçimde üstünde */
+.mtk-lang select { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+.mtk-cur { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.mtk-cur .c { display: none; }
+@media (max-width: 720px) { .mtk-cur .n { display: none; } .mtk-cur .c { display: inline; } .mtk-lang { padding: 0 9px; } }
+@media (max-width: 480px) { .nav .nav-cta { display: none; } .nav { gap: 14px; } }
+
+/* fiyat kartları: KOBİ · KOBİ + Esnaf · Dron */
+.pcards { grid-template-columns: repeat(3, minmax(0, 380px)); }
+@media (max-width: 1100px) { .pcards { grid-template-columns: 1fr; max-width: 520px; margin-inline: auto; } }
+/* Çerez onay bandı (Google Analytics yalnız izinle) — hepgo renkleriyle */
+.mtk-consent { position: fixed; z-index: 60; inset-inline: 16px; bottom: 16px; max-width: 760px; margin-inline: auto; display: flex; gap: 14px 18px; align-items: center; flex-wrap: wrap;
+  padding: 14px 18px; border-radius: 14px; background: var(--card, #fff); color: var(--body, #3a3f4b); border: 1px solid var(--line, #e6e8ee); box-shadow: 0 18px 50px rgba(0,0,0,.18); font-size: 14px; line-height: 1.5; }
+.mtk-consent p { margin: 0; flex: 1 1 320px; }
+.mtk-consent .c-act { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+.mtk-consent a { color: var(--mut, #7d8391); font-size: 13px; margin-inline-end: 4px; }
+.mtk-consent button { font: inherit; font-size: 14px; font-weight: 600; padding: 8px 16px; border-radius: 10px; cursor: pointer; border: 1px solid var(--line, #e6e8ee); background: transparent; color: var(--ink, #111); }
+.mtk-consent button.ok { background: var(--ink, #111); color: var(--card, #fff); border-color: transparent; }
+.mtk-cprefs { display: block; margin-top: 14px; font-size: 13px; color: var(--mut, #7d8391); }
+.mtk-cprefs a { color: inherit; }
+@media (max-width: 560px) { .mtk-consent { inset-inline: 8px; bottom: 8px; } .mtk-consent .c-act { width: 100%; justify-content: flex-end; } }

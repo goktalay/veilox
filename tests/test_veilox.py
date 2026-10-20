@@ -1,6 +1,6 @@
 """Veilox merkez (provisioning) testi: giriş, paket vitrini, self-kayıt, firma oluşturma, provisioning (systemctl'siz),
 offline paket üretimi ve yetki kontrolü. Gerçek tenant verisine DOKUNMAZ (merkez artık veri okumaz).
-Çalıştırma: cd ~/veilox && /home/mkaderoglu/caymazbuild/.venv/bin/python -m tests.test_veilox
+Çalıştırma (central/veilox_server içinde): ../../.venv/bin/python -m tests.test_veilox
 """
 import json
 import os
@@ -23,7 +23,7 @@ os.environ.update(
     VEILOX_DATA_DIR=str(tmp / 'central'), VEILOX_TENANTS_DIR=str(tmp / 'tenants'),
     VEILOX_SYSTEMD_DIR=str(tmp / 'systemd'), VEILOX_PROVISION_EXEC='0',
     VEILOX_CF_HOME=str(tmp / 'cfhome'),
-    VEILOX_TENANT_APP_DIR='/home/mkaderoglu/caymazbuild',
+    VEILOX_TENANT_APP_DIR=str(Path(__file__).resolve().parents[3]),
 )
 
 from fastapi.testclient import TestClient  # noqa: E402
@@ -69,6 +69,20 @@ def main():
                                                'mode': 'offline', 'modules': ['admin', 'users', 'reports']}))
         z = c.get(f"/api/companies/{oc['id']}/offline-package")
         assert z.status_code == 200 and z.headers['content-type'] == 'application/zip' and len(z.content) > 10000
+
+        # Satır sonu enjeksiyonu: .env / systemd birimine yeni ayar eklenemez
+        evil = 'Kotu A.S.\nExecStartPre=/bin/sh -c id'
+        r = c.post('/api/register', json={'company_name': evil, 'master_username': 'k@kotu.com', 'password': 'uzun-sifre-1234'})
+        assert r.status_code == 400, r.text
+        r = c.post('/api/companies', json={'name': 'Kotu', 'master_username': 'k@kotu.com\nCAYMAZ_MODULES=admin'})
+        assert r.status_code == 400, r.text
+        from veilox import provision, pkg as vpkg
+        unit = provision._unit_text(evil + ' %n \\', '', ('PORT', '9'), '/e', '/d', '/b')
+        assert not any(ln.startswith('ExecStartPre') for ln in unit.splitlines()) and '%%n' in unit and unit.count('\n') == provision._unit_text('x', '', ('PORT', '9'), '/e', '/d', '/b').count('\n')
+        for env in (provision._env_text('a@b.c', 'p\nX=1', 'Ad\rSoyad', evil, 'a@b.c', ['admin\nY=2']),
+                    vpkg._env_text(evil, 'a@b.c', 'Ad', 'p\u2028Z=3', ['admin'])):
+            keys = [ln.split('=', 1)[0] for ln in env.splitlines() if ln and not ln.startswith('#')]
+            assert not {'ExecStartPre', 'X', 'Y', 'Z'} & set(keys) and len(keys) == len(set(keys)), env
 
     print('test_veilox: TUM TESTLER GECTI')
 

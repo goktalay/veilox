@@ -15,6 +15,8 @@ import time
 import urllib.error
 import urllib.request
 from pathlib import Path
+from . import settings
+settings.load()   # .env, aşağıdaki ayarlar okunmadan önce (bkz. settings.py)
 
 ENABLED = os.environ.get('VEILOX_CF_ENABLE', '0') == '1'
 BASE = os.environ.get('VEILOX_CF_BASE', 'veilox.app')
@@ -32,8 +34,14 @@ def _read_lines(path=None):
     return (path or CONFIG).read_text(encoding='utf-8').splitlines()
 
 
+BACKUP_DIR = os.environ.get('VEILOX_CF_BACKUP_DIR', '').strip()   # boş: config.yml'nin yanına (sunucuda /etc'e yazılamaz)
+
+
 def _backup(path):
-    bak = path.with_name(path.name + '.bak-' + time.strftime('%Y%m%d%H%M%S'))
+    name = path.name + '.bak-' + time.strftime('%Y%m%d%H%M%S')
+    if BACKUP_DIR:
+        Path(BACKUP_DIR).mkdir(parents=True, exist_ok=True)
+    bak = Path(BACKUP_DIR) / name if BACKUP_DIR else path.with_name(name)
     bak.write_text(path.read_text(encoding='utf-8'), encoding='utf-8')
     return bak
 
@@ -94,7 +102,9 @@ def reload_tunnel():
     """Yeni ingress'i devreye alır. Fabrikada Docker konteyneri restart; sunucuda native cloudflared servisi restart.
     Sunucuda veilox hepgo kullanıcısıyla çalıştığından systemctl için parolasız sudo gerekir (sudoers drop-in)."""
     if RELOAD == 'systemd':
-        r = subprocess.run(['sudo', '-n', 'systemctl', 'restart', CF_SERVICE], capture_output=True, text=True, timeout=60)
+        # RESTART DEĞİL RELOAD (SIGHUP): cloudflared ingress'i tüneli DÜŞÜRMEDEN tazeler → yeni firma eklerken
+        # TÜM siteler kesintiye uğramaz. (cloudflared.service ExecReload=kill -HUP + sudoers 'reload' izni gerekir.)
+        r = subprocess.run(['sudo', '-n', 'systemctl', 'reload', CF_SERVICE], capture_output=True, text=True, timeout=60)
     else:
         r = _docker('restart', CONTAINER)
     if r.returncode != 0:
@@ -172,8 +182,9 @@ def route_dns(host):
     return ok, out
 
 
-def publish(slug, service):
+def publish(slug, service, do_reload=True):
     """Online firma için <slug>.BASE alt alan adını yayına alır: ingress (host→service) + tünel yeniden yükleme.
+    do_reload=False → ingress yazılır ama reload atlanır (çağıran reload'u sonra/arka planda yapar).
     service: Unix soket ('unix:/cfhome/.cloudflared/sockets/<slug>.sock') ya da http://127.0.0.1:port.
     DNS: *.BASE wildcard kaydı (Cloudflare panosunda tek sefer) tüm alt alanları kapsar; ayrıca per-firma
     DNS kaydı da BEST-EFFORT denenir. DNS hatası provisioning'i DURDURMAZ.
@@ -182,7 +193,7 @@ def publish(slug, service):
         return None, ''
     host = hostname(slug)
     changed = add_ingress(host, service)
-    if changed:
+    if changed and do_reload:
         reload_tunnel()
     note = ''
     try:
